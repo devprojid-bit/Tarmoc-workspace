@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
-<title>TARMOC Workspace — Central Dashboard</title>
+<title>TARMOC Enterprise Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
@@ -519,7 +519,7 @@ function renderLogin(){
   $('#app').innerHTML=`
   <div class="login">
     <div class="lg-left">
-      <div>${brandLockup(50,26)}</div>
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:14px">${brandLockup(56,28)}<span style="display:inline-flex;align-items:center;gap:14px;font:600 9.5px var(--mono);letter-spacing:.34em;color:${GOLD}"><span style="width:38px;height:1px;background:linear-gradient(90deg,rgba(242,193,14,0),${GOLD})"></span><span style="margin-right:-.34em">ENTERPRISE DASHBOARD</span><span style="width:38px;height:1px;background:linear-gradient(270deg,rgba(242,193,14,0),${GOLD})"></span></span></div>
       <div class="lg-mid">
         <h1>Satu ruang kerja.<br><em>Semua aplikasi.</em><br>Satu kontrol akses.</h1>
         <p>Central Dashboard dengan backend sungguhan — password ter-hash, sesi aman, dan otorisasi diputuskan di server.</p>
@@ -600,7 +600,7 @@ function renderShell(){
   <div class="sb-backdrop ${ui.sideOpen?'show':''}" data-act="close-side"></div>
   <div class="shell ${COLLAPSED?'sb-min':''}">
     <aside class="sidebar ${ui.sideOpen?'open':''}">
-      <div class="sb-brand"><span class="mark" style="${BRAND.img?'':'color:var(--brand)'}">${BRAND.img?`<img src="${BRAND.img}" alt="TARMOC" style="height:34px;width:auto;display:block">`:`${brandMark(34)}<div class="txt"><b>TARMOC</b><span>SMOOTH RUNWAY FOR YOUR NETWORK</span></div>`}</span></div>
+      <div class="sb-brand"><span class="mark" style="${BRAND.img?'':'color:var(--brand)'}">${BRAND.img?`<img src="${BRAND.img}" alt="TARMOC" style="height:34px;width:auto;display:block">`:`${brandMark(34)}<div class="txt"><b>TARMOC</b><span style="letter-spacing:.16em">ENTERPRISE DASHBOARD</span></div>`}</span></div>
       <button class="sb-fold" data-act="sb-toggle" data-tip="${COLLAPSED?'Perluas menu':'Ciutkan menu'}">${icon(COLLAPSED?'chevrons-right':'chevrons-left')}<span class="flbl">Ciutkan</span></button>
       <nav class="sb-nav">${navItems()}</nav>
       <div class="sb-foot">
