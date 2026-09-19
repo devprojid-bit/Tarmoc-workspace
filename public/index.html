@@ -428,7 +428,7 @@ const BRAND={img:'',mark:''};const GOLD='#F2C10E';
 (function(){
   const lists=[['img',['logo-tarmoc.png','logo.png']],['mark',['logo-mark.png','mark.png']]];
   lists.forEach(([key,list])=>{let i=0;const next=()=>{if(i>=list.length)return;
-    const f=list[i++],im=new Image();im.onload=()=>{BRAND[key]=f;renderCurrent()};im.onerror=next;im.src=f};next();});
+    const f=list[i++],im=new Image();im.onload=()=>{BRAND[key]=f;try{if(key==='img'){const fl=document.querySelector('link[rel="icon"]');if(fl)fl.href=f}}catch(e){};renderCurrent()};im.onerror=next;im.src=f};next();});
 })();
 const HORN_L="M8 12 C34 18 66 34 94 56 C64 76 28 58 8 12 Z";
 const HORN_R="M192 12 C166 18 134 34 106 56 C136 76 172 58 192 12 Z";
@@ -437,7 +437,7 @@ const EYE_L="M54 104 C62 106 68 114 69 124 C60 121 54 112 54 104 Z";
 const EYE_R="M146 104 C138 106 132 114 131 124 C140 121 146 112 146 104 Z";
 const NOSTRIL="M92 182 C96 178 104 178 108 182 C104 190 96 190 92 182 Z";
 const bull=h=>`<svg viewBox="0 0 200 224" height="${h}" style="height:${h}px;width:auto;flex:none;display:block" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${HORN_L} ${HORN_R} ${HEAD} ${EYE_L} ${EYE_R} ${NOSTRIL}"/></svg>`;
-const brandMark=h=>BRAND.mark?`<img src="${BRAND.mark}" alt="" style="height:${h}px;width:auto;display:block">`:`<span style="color:${GOLD};display:flex">${bull(h)}</span>`;
+const brandMark=h=>BRAND.mark?`<img src="${BRAND.mark}" alt="TARMOC" style="height:${h}px;width:auto;display:block">`:BRAND.img?`<span style="display:inline-block;width:${h}px;height:${h}px;overflow:hidden;flex:none"><img src="${BRAND.img}" alt="TARMOC" style="height:${h}px;width:auto;max-width:none;display:block"></span>`:`<span style="color:${GOLD};display:flex">${bull(h)}</span>`;
 const brandLockup=(h,ns)=>BRAND.img
   ?`<img src="${BRAND.img}" alt="TARMOC" style="height:${Math.round(h*1.05)}px;width:auto;display:block">`
   :`<span style="display:inline-flex;align-items:center;gap:13px"><span style="color:${GOLD};display:flex">${bull(h)}</span>
