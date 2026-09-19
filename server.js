@@ -671,6 +671,12 @@ app.get('/api/sso/verify', h((req, res) => {
 
 /* ---------- health & static ---------- */
 app.get('/api/health', (req, res) => res.json({ ok: true, service: 'tarmoc-api', time: now() }));
+
+app.delete('/api/logs', auth, superOnly, h((req, res) => {
+  db.prepare('DELETE FROM activity_logs').run();
+  logAct(req, 'logs.clear', `Log aktivitas dibersihkan oleh ${req.user.name}`);
+  res.json({ ok: true });
+}));
 /* [PATCH] kirim pemetaan permission sebuah role — dipakai matriks frontend */
 app.get('/api/roles/:id/permissions', auth, h((req, res) => {
   const r = db.prepare('SELECT * FROM roles WHERE id=?').get(req.params.id);
