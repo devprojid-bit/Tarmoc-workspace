@@ -8,3 +8,5 @@ cookies.txt
 c.txt
 b.txt
 *.log
+*.bak*
+public/mockup-login.html

@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Diagnosa TARMOC</title>
+<style>body{font-family:monospace;max-width:660px;margin:40px auto;padding:0 16px;background:#161510;color:#E9E7DB}
+.row{padding:10px 14px;border:1px solid #3A3522;border-radius:10px;margin:8px 0;display:flex;gap:10px;align-items:center}
+.ok{border-color:#2E7A5C}.fail{border-color:#B3402E;color:#F0A091}
+button{padding:12px 20px;border-radius:10px;border:none;background:#F2C10E;font-weight:700;cursor:pointer;font-size:15px}
+small{color:#8F8C77}pre{white-space:pre-wrap;color:#B3AD93;font-size:11px;margin:4px 0 10px}
+h2{color:#F2C10E}</style></head><body>
+<h2>🔍 Diagnosa TARMOC</h2>
+<p>Origin halaman ini: <b id="org"></b></p>
+<button onclick="run()">JALANKAN TES</button><div id="out"></div>
+<script>
+document.getElementById('org').textContent=location.origin;
+const out=document.getElementById('out');
+function row(s,ok,detail){out.innerHTML+=`<div class="row ${ok?'ok':'fail'}"><b>${ok?'✅':'❌'}</b><span>${s}</span></div>${detail?`<pre>${detail}</pre>`:''}`}
+async function run(){out.innerHTML='';
+ try{const r=await fetch('/api/health');const j=await r.json();row('1. API terjangkau dari browser (health)',j.ok===true,JSON.stringify(j))}
+ catch(e){row('1. API terjangkau dari browser (health)',false,e.message+' → Halaman terbuka tapi API tidak terjawab. Kemungkinan Anda membuka lewat proxy/port lain, bukan langsung ke port 3010.')}
+ let loginOk=false;
+ try{const r=await fetch('/api/auth/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'heru@tarmoc.io',password:'tarmoc123'})});
+  const j=await r.json();loginOk=r.ok;row('2. Login via API (heru@tarmoc.io)',r.ok,JSON.stringify(j))}
+ catch(e){row('2. Login via API',false,e.message)}
+ try{const r=await fetch('/api/auth/me',{credentials:'same-origin'});const j=await r.json();
+  row('3. Cookie tersimpan & sesi terbaca',!!j.user,JSON.stringify(j).slice(0,160))}
+ catch(e){row('3. Cookie tersimpan & sesi terbaca',false,e.message+' → Login berhasil tapi cookie tidak tersimpan di browser. Coba jendela incognito, atau hapus cookie situs ini.')}
+ row('KESIMPULAN',true,loginOk?'Bila semua ✅: buka http:<IP>:3010 (bukan diag.html), hard-refresh Ctrl+Shift+R, lalu login — pasti berhasil.':'Laporkan nomor ❌ yang pertama muncul.');
+}
+</script></body></html>
