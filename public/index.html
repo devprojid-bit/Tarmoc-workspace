@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>TARMOC Workspace — Central Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+try{var _t=localStorage.getItem('tarmoc_theme');
+if(_t){document.documentElement.setAttribute('data-theme',_t)}
+else if(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark')}
+}catch(e){}
+</script>
+<style>
+:root{
+  color-scheme:light;
+  --paper:#F5F4EE; --surface:#FFFFFF; --ink:#1B1A14; --ink2:#6E6A5C; --ink3:#9B977F;
+  --line:#E7E4D8; --line2:#DAD6C8;
+  --hover:#F2F0E7; --soft:#F1EFE6; --soft2:#FAF9F3; --rowh:#FBFAF5; --sk:#E9E6DA;
+  --topbg:rgba(245,244,238,.86);
+  --spruce:#1D5C48; --spruce-deep:#12432F; --spruce-soft:#E7EFE9;
+  --amber:#A8742A; --amber-soft:#F5EBD6;
+  --red:#B3402E; --red-soft:#F6E4DF;
+  --side:#161510; --side-txt:#E9E7DB; --side-dim:#8F8C77;
+  --brand:#F2C10E; --brand-strong:#D9A90B; --brand-ink:#1B1403;
+  --brand-soft:rgba(242,193,14,.15); --brand-text:#8A6508;
+  --disp:'Bricolage Grotesque',serif; --body:'Instrument Sans',sans-serif; --mono:'JetBrains Mono',monospace;
+  --r-lg:18px; --r-md:12px; --r-sm:10px;
+  --sh-sm:0 1px 2px rgba(24,21,12,.05),0 1px 6px rgba(24,21,12,.04);
+  --sh-md:0 4px 12px rgba(24,21,12,.06),0 16px 40px -18px rgba(24,21,12,.18);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#14120C; --surface:#1D1A12; --ink:#F2EFE1; --ink2:#B3AD93; --ink3:#807A60;
+  --line:#2C2819; --line2:#3A3522;
+  --hover:#262217; --soft:#262217; --soft2:#211E14; --rowh:#242015; --sk:#2A261A;
+  --topbg:rgba(20,18,12,.84); --side:#0E0D08;
+  --brand-soft:rgba(242,193,14,.12); --brand-text:#F5C51D;
+  --sh-sm:0 1px 2px rgba(0,0,0,.45),0 1px 8px rgba(0,0,0,.3);
+  --sh-md:0 8px 14px rgba(0,0,0,.4),0 18px 44px -16px rgba(0,0,0,.6);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+h1,h2,h3,h4{font-family:var(--disp);letter-spacing:-.01em;line-height:1.15}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,select{font-family:inherit;font-size:14px;color:var(--ink)}
+::selection{background:var(--brand-soft)}
+a{color:inherit}
+.icon-btn{width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink2);transition:.15s}
+.icon-btn:hover{background:var(--hover);color:var(--ink)}
+.icon-btn svg{width:18px;height:18px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:11px;font-weight:600;font-size:13.5px;transition:.18s;border:1px solid transparent}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--brand);color:var(--brand-ink)}
+.btn-primary:hover{background:var(--brand-strong);transform:translateY(-1px)}
+.btn-ghost{border-color:var(--line2);background:var(--surface);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink3);background:var(--soft2)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-danger:hover{background:#96341F}
+.btn-soft{background:var(--brand-soft);color:var(--brand-text)}
+.btn-soft:hover{background:var(--brand);color:var(--brand-ink)}
+.btn-sm{padding:6px 12px;font-size:12.5px;border-radius:9px}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.input,.select{width:100%;padding:10px 13px;border:1px solid var(--line2);border-radius:11px;background:var(--surface);transition:.15s;outline:none}
+.input:focus,.select:focus{border-color:#C9A40E;box-shadow:0 0 0 3px rgba(242,193,14,.22)}
+.label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em}
+.err{color:var(--red);font-size:12.5px;margin-top:6px;display:none}
+.err.show{display:block}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600}
+.b-green{background:var(--spruce-soft);color:var(--spruce-deep)}
+.b-gray{background:#ECEAE0;color:var(--ink2)}
+.b-amber{background:var(--amber-soft);color:#7C5514}
+.b-red{background:var(--red-soft);color:#8C2E1D}
+[data-theme="dark"] .b-green{background:rgba(61,153,112,.16);color:#86D9B4}
+[data-theme="dark"] .b-gray{background:rgba(255,255,255,.09);color:#B9B49C}
+[data-theme="dark"] .b-amber{background:rgba(242,193,14,.12);color:#F0CE55}
+[data-theme="dark"] .b-red{background:rgba(179,64,46,.22);color:#F0A091}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--spruce);flex:none}
+.dot.off{background:#C6C2B0}
+[data-theme="dark"] .dot.off{background:#4A4531}
+.kbd{font-family:var(--mono);font-size:10.5px;padding:2px 6px;border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;background:var(--soft2);color:var(--ink2)}
+.mono{font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.mut{color:var(--ink2)}.mut3{color:var(--ink3)}
+.urlchip svg{width:12px;height:12px;flex:none}
+.monogram{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;font:700 19px/1 var(--disp);flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),var(--sh-sm)}
+.mono-sm{width:27px;height:27px;border-radius:8px;font-size:11.5px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font:600 12.5px var(--body);flex:none}
+.avatar-lg{width:56px;height:56px;font-size:19px}
+.shell{display:grid;grid-template-columns:256px 1fr;min-height:100vh}
+.sidebar{background:var(--side);color:var(--side-txt);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:40}
+.sb-brand{padding:22px 20px 14px;display:flex;align-items:center;gap:12px}
+.sb-brand .mark{color:var(--brand);display:flex}
+.sb-brand .txt b{font-family:var(--disp);font-size:18px;font-weight:800;letter-spacing:.12em;display:block;color:var(--brand);line-height:1.1}
+.sb-brand .txt span{font-size:9px;font-weight:600;letter-spacing:.16em;color:var(--side-dim)}
+.sb-fold{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 20px 4px;padding:7px;border-radius:10px;color:var(--side-dim);border:1px solid rgba(255,255,255,.08);transition:.15s;width:calc(100% - 40px)}
+.sb-fold:hover{color:#fff;background:rgba(255,255,255,.06)}
+.sb-fold svg{width:15px;height:15px}
+.sb-fold .flbl{font-size:11.5px;font-weight:600;letter-spacing:.04em}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 12px}
+.sb-sec{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--side-dim);text-transform:uppercase;padding:16px 12px 7px}
+.sb-item{display:flex;align-items:center;gap:11px;width:100%;padding:9.5px 12px;border-radius:10px;color:#C9C6B4;font-weight:500;font-size:13.5px;transition:.15s;position:relative;text-align:left}
+.sb-item svg{width:17px;height:17px;flex:none;opacity:.85}
+.sb-item .lbl{flex:1;min-width:0}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.on{background:rgba(255,255,255,.09);color:#fff}
+.sb-item.on::before{content:'';position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--brand)}
+.sb-foot{padding:14px;border-top:1px solid rgba(255,255,255,.07)}
+.sb-user{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:12px;transition:.15s;width:100%;text-align:left;position:relative}
+.sb-user:hover{background:rgba(255,255,255,.06)}
+.sb-user .who{min-width:0;flex:1;text-align:left}
+.sb-user .who b{display:block;font-size:13px;color:#fff;font-weight:600}
+.sb-user .who span{font-size:11.5px;color:var(--side-dim)}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:30;background:var(--topbg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 28px;height:64px}
+#view{width:100%;max-width:1440px;margin:0 auto;padding:34px 40px 70px;display:flex;flex-direction:column;flex:1}
+@media(min-width:901px){
+  .shell{transition:grid-template-columns .28s cubic-bezier(.2,.8,.3,1)}
+  .shell.sb-min{grid-template-columns:76px 1fr}
+  .sb-min .sb-brand{justify-content:center;padding:22px 8px 10px}
+  .sb-min .sb-brand .txt{display:none}
+  .sb-min .sb-fold{width:40px;margin:8px auto 2px}
+  .sb-min .sb-fold .flbl{display:none}
+  .sb-min .sb-sec{height:0;overflow:hidden;padding:6px 0 0}
+  .sb-min .sb-item{justify-content:center;padding:11px 0;gap:0}
+  .sb-min .sb-item .lbl{display:none}
+  .sb-min .sb-user{justify-content:center;padding:9px 0}
+  .sb-min .sb-user .who,.sb-min .sb-user .sb-out{display:none}
+  .sb-min .sb-item:hover::after,.sb-min .sb-fold:hover::after,.sb-min .sb-user:hover::after{
+    content:attr(data-tip);position:absolute;left:calc(100% + 12px);top:50%;transform:translateY(-50%);
+    background:var(--surface);color:var(--ink);border:1px solid var(--line2);box-shadow:var(--sh-md);
+    padding:6px 11px;border-radius:9px;font-size:12.5px;font-weight:600;white-space:nowrap;z-index:90;pointer-events:none}
+}
+.menu-wrap{position:relative}
+.menu{position:absolute;right:0;top:calc(100% + 6px);min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh-md);padding:6px;z-index:60;display:none;animation:pop .14s ease}
+.menu.show{display:block}
+.menu button{display:flex;align-items:center;gap:10px;width:100%;padding:8.5px 11px;border-radius:9px;font-size:13.5px;font-weight:500;text-align:left;transition:.12s}
+.menu button svg{width:15px;height:15px;color:var(--ink2)}
+.menu button:hover{background:var(--hover)}
+.menu button.danger,.menu button.danger svg{color:var(--red)}
+.menu button.danger:hover{background:var(--red-soft)}
+.menu hr{border:none;border-top:1px solid var(--line);margin:6px 4px}
+@keyframes pop{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1}}
+.notif-panel{width:330px;max-height:400px;overflow:auto}
+.searchbox{display:flex;align-items:center;gap:10px;padding:8.5px 13px;border:1px solid var(--line2);border-radius:11px;background:var(--surface);color:var(--ink3);font-size:13.5px;width:340px;max-width:44vw;transition:.15s}
+.searchbox:hover{border-color:var(--ink3);box-shadow:var(--sh-sm)}
+.searchbox svg{width:16px;height:16px}
+.searchbox span{flex:1;text-align:left}
+.searchbox .kbd{margin-left:auto}
+.stats{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden;flex-wrap:wrap}
+.stat{flex:1;min-width:150px;padding:20px 24px;position:relative}
+.stat+.stat::before{content:'';position:absolute;left:0;top:16px;bottom:16px;width:1px;background:var(--line)}
+.stat b{font:700 30px/1.1 var(--disp);display:block;letter-spacing:-.02em}
+.stat span{font-size:12.5px;color:var(--ink2);font-weight:500}
+.grid-apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:18px}
+.app-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;transition:.22s cubic-bezier(.2,.7,.3,1);box-shadow:var(--sh-sm);position:relative}
+.app-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:var(--ink3)}
+.ac-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.ac-head .grow{flex:1}
+.star{color:var(--ink3);transition:.18s}
+.star:hover{color:var(--amber);transform:scale(1.12)}
+.star.on{color:var(--amber)}
+.star.on svg{fill:var(--amber)}
+.app-card h3{font-size:17.5px;font-weight:700}
+.app-card .desc{color:var(--ink2);font-size:13px;margin-top:3px;min-height:20px}
+.ac-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);border-top:1px solid var(--line);padding-top:13px;margin-top:14px}
+.ac-meta .role{font-weight:600;color:var(--brand-text);background:var(--brand-soft);padding:2px 8px;border-radius:99px;font-size:11px}
+.ac-meta .ago{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.open-btn{margin-top:13px;width:100%;justify-content:center;border:1px solid var(--line2);background:var(--soft2);font-weight:600}
+.open-btn:hover{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.page-head h2{font-size:27px;font-weight:700}
+.page-head p{color:var(--ink2);margin-top:4px;font-size:13.5px}
+.crumb{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.05em;margin-bottom:8px;text-transform:uppercase}
+.crumb em{font-style:normal;color:var(--brand-text)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-sm)}
+.card-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);gap:10px;flex-wrap:wrap}
+.card-h h3{font-size:15.5px;font-weight:700}
+.card-b{padding:20px}
+.fadeup{animation:fu .35s cubic-bezier(.2,.7,.3,1)}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.dash-2col{display:grid;grid-template-columns:1fr 350px;gap:22px;align-items:start;margin-top:24px}
+.feed-item{display:flex;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);align-items:flex-start}
+.feed-item:last-child{border-bottom:none}
+.feed-ic{width:30px;height:30px;border-radius:9px;background:var(--soft);display:grid;place-items:center;flex:none;color:var(--ink2)}
+.feed-ic svg{width:14.5px;height:14.5px}
+.feed-item p{font-size:13px;line-height:1.45}
+.feed-item time{font-family:var(--mono);font-size:10.5px;color:var(--ink3);white-space:nowrap}
+.qa-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 20px;border-bottom:1px solid var(--line);text-align:left;font-weight:600;font-size:13.5px;transition:.14s}
+.qa-item:last-child{border-bottom:none}
+.qa-item svg:first-child{width:16px;height:16px;color:var(--brand-text)}
+.qa-item .chev{margin-left:auto;width:15px;height:15px;color:var(--ink3);transition:.14s}
+.qa-item:hover{background:var(--soft2)}
+.qa-item:hover .chev{transform:translateX(3px);color:var(--brand-text)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);font-weight:600;text-align:left;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--soft2);white-space:nowrap}
+td{padding:13px 20px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:.12s}
+tbody tr:hover{background:var(--rowh)}
+.cell-user{display:flex;align-items:center;gap:11px}
+.cell-user b{font-weight:600;display:block}
+.cell-user span{font-size:12px;color:var(--ink2)}
+.rowact{display:flex;gap:4px;justify-content:flex-end}
+.switch{width:38px;height:22px;border-radius:99px;background:#D5D1C1;position:relative;transition:.2s;flex:none;display:inline-block}
+[data-theme="dark"] .switch{background:#3A3522}
+.switch::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch.on{background:var(--brand)}
+.switch.on::after{left:19px}
+.tabs{display:inline-flex;background:var(--hover);border-radius:11px;padding:3px;gap:2px}
+.tabs button{padding:7px 15px;border-radius:8px;font-weight:600;font-size:13px;color:var(--ink2);transition:.15s}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:var(--sh-sm)}
+.overlay{position:fixed;inset:0;background:rgba(22,20,13,.45);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:18px;animation:fdin .18s ease}
+[data-theme="dark"] .overlay{background:rgba(0,0,0,.62)}
+@keyframes fdin{from{opacity:0}}
+.modal{background:var(--surface);border-radius:20px;width:100%;max-width:540px;max-height:90vh;overflow:auto;box-shadow:var(--sh-md);animation:mup .22s cubic-bezier(.2,.8,.3,1)}
+.modal-lg{max-width:660px}
+@keyframes mup{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.modal-h{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0}
+.modal-h h3{font-size:18px;font-weight:700}
+.modal-b{padding:8px 24px 24px}
+.modal-f{display:flex;justify-content:flex-end;gap:10px;padding:0 24px 22px}
+#toasts{position:fixed;right:20px;bottom:20px;z-index:200;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.toast{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px;box-shadow:var(--sh-md);font-size:13.5px;font-weight:500;max-width:380px;animation:tin .28s cubic-bezier(.2,.8,.3,1)}
+.toast svg{width:17px;height:17px;flex:none}
+.toast.ok svg{color:var(--spruce)} .toast.err svg{color:var(--red)} .toast.warn svg{color:var(--brand-text)}
+.toast.out{animation:tout .25s forwards}
+@keyframes tin{from{opacity:0;transform:translateX(30px)}}
+@keyframes tout{to{opacity:0;transform:translateX(30px)}}
+.sk{background:var(--sk);border-radius:10px;animation:skp 1.1s ease-in-out infinite}
+@keyframes skp{50%{opacity:.55}}
+.pal-panel{background:var(--surface);border-radius:18px;width:100%;max-width:590px;box-shadow:var(--sh-md);overflow:hidden;align-self:flex-start;margin-top:11vh;animation:mup .2s ease}
+.pal-in{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.pal-in svg{width:19px;height:19px;color:var(--ink3)}
+.pal-in input{flex:1;border:none;outline:none;font-size:16px;background:none;font-family:var(--body);color:var(--ink)}
+.pal-list{max-height:400px;overflow-y:auto;padding:8px}
+.pal-g{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);padding:10px 12px 4px}
+.pal-it{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500}
+.pal-it svg{width:16px;height:16px;color:var(--ink2);flex:none}
+.pal-it small{margin-left:auto;color:var(--ink3);font-size:11.5px;font-weight:400}
+.pal-it.act{background:var(--brand-soft)}
+.pal-it.act svg{color:var(--brand-text)}
+.pal-empty{padding:40px;text-align:center;color:var(--ink3);font-size:13.5px}
+.launch{position:fixed;inset:0;background:var(--side);z-index:150;display:flex;align-items:center;justify-content:center;color:var(--side-txt);animation:fdin .25s}
+.launch::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.09) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 75%)}
+.launch-in{position:relative;text-align:center;width:min(430px,90vw)}
+.launch-in .monogram{width:72px;height:72px;border-radius:20px;font-size:28px;margin:0 auto 18px}
+.launch-in h2{font-size:26px;color:#fff}
+.launch-in .url{font-family:var(--mono);font-size:12.5px;color:var(--side-dim);margin-top:5px}
+.l-steps{text-align:left;margin:28px auto 0;max-width:320px}
+.l-step{display:flex;align-items:center;gap:11px;padding:8px 0;font-size:13.5px;color:var(--side-dim);opacity:0;transform:translateY(5px);transition:.4s}
+.l-step.show{opacity:1;transform:none}
+.l-step.done{color:#D7D5C6}
+.l-step .sp{width:17px;height:17px;border:2px solid #4A483A;border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite;flex:none}
+.l-step.done .sp{border:none;animation:none;background:var(--brand);position:relative;border-radius:50%}
+.l-step.done .sp::after{content:'';position:absolute;left:5px;top:2.5px;width:4px;height:8px;border:solid #1B1403;border-width:0 2px 2px 0;transform:rotate(45deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.l-bar{height:3px;background:rgba(255,255,255,.1);border-radius:99px;margin:26px auto 0;max-width:320px;overflow:hidden}
+.l-bar i{display:block;height:100%;background:var(--brand);width:0;transition:width .5s ease}
+.l-final{margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--brand);min-height:18px;word-break:break-all}
+.l-done{margin-top:20px;display:flex;gap:10px;justify-content:center;opacity:0;transition:.4s;flex-wrap:wrap}
+.l-done.show{opacity:1}
+.login{display:grid;grid-template-columns:1.05fr 1fr;min-height:100vh}
+.lg-left{background:var(--side);color:var(--side-txt);padding:44px 52px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.lg-left::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(ellipse at 30% 40%,#000 10%,transparent 70%)}
+.lg-left>*{position:relative}
+.lg-mid{margin:auto 0;max-width:480px}
+.lg-mid h1{font-size:clamp(34px,4.2vw,52px);font-weight:800;color:#fff;letter-spacing:-.02em}
+.lg-mid h1 em{font-style:normal;color:var(--brand)}
+.lg-mid p{color:#A5A28B;margin-top:16px;font-size:15px;max-width:400px}
+.lg-feats{margin-top:34px;display:flex;flex-direction:column;gap:13px}
+.lg-feat{display:flex;gap:12px;align-items:center;font-size:13.5px;color:#C9C6B4}
+.lg-feat .fi{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.07);display:grid;place-items:center;flex:none;color:var(--brand)}
+.lg-feat .fi svg{width:15px;height:15px}
+.lg-right{display:flex;align-items:center;justify-content:center;padding:36px 24px;background:var(--paper);position:relative}
+.lg-card{width:100%;max-width:400px}
+.lg-card h2{font-size:24px;font-weight:700}
+.lg-card .sub{color:var(--ink2);margin:6px 0 24px;font-size:13.5px}
+.lg-form{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--sh-sm)}
+.demo-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.demo-chip{display:flex;align-items:center;gap:9px;border:1px solid var(--line2);background:var(--surface);border-radius:12px;padding:8px 13px;font-size:12.5px;font-weight:600;transition:.15s;text-align:left}
+.demo-chip:hover{border-color:#C9A40E;background:var(--brand-soft)}
+.demo-chip small{display:block;font-weight:400;color:var(--ink3);font-size:10.5px}
+.pw-wrap{position:relative}
+.pw-wrap .icon-btn{position:absolute;right:5px;top:50%;transform:translateY(-50%)}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.roles-grid{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+.role-item{display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;border-bottom:1px solid var(--line);text-align:left;transition:.13s;border-left:3px solid transparent}
+.role-item:hover{background:var(--soft2)}
+.role-item.on{background:var(--brand-soft);border-left-color:var(--brand)}
+.role-item b{font-size:14px;display:block}
+.role-item small{color:var(--ink2);font-size:11.5px}
+.role-item .cnt{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.perm-group{margin-bottom:18px}
+.perm-group>h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);font-family:var(--mono);margin-bottom:8px}
+.perm-row{display:flex;align-items:center;gap:12px;padding:9px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:7px;transition:.13s;cursor:pointer}
+.perm-row:hover{border-color:var(--ink3);background:var(--soft2)}
+.perm-row.on{background:var(--brand-soft);border-color:rgba(242,193,14,.45)}
+.perm-row input{width:16px;height:16px;accent-color:var(--brand-strong);flex:none}
+.perm-row b{font-size:13.5px;font-weight:600}
+.perm-row code{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.cb-row{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cb-row:last-child{border-bottom:none}
+.n403{text-align:center;padding:80px 20px}
+.n403 b{font:800 110px/1 var(--disp);letter-spacing:-.04em;color:transparent;-webkit-text-stroke:2px var(--line2);display:block}
+.n403 h2{font-size:24px;margin-top:6px}
+.n403 p{color:var(--ink2);margin:10px auto 26px;max-width:380px}
+.empty{text-align:center;padding:52px 20px;color:var(--ink2)}
+.empty .ei{width:52px;height:52px;border-radius:15px;background:var(--soft);display:grid;place-items:center;margin:0 auto 14px;color:var(--ink3)}
+.empty .ei svg{width:22px;height:22px}
+.empty b{font-family:var(--disp);font-size:16px;color:var(--ink)}
+.empty p{font-size:13px;margin:5px auto 16px;max-width:300px}
+.only-m{display:none}
+@media(max-width:1080px){
+  .dash-2col{grid-template-columns:1fr}
+  .roles-grid{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;width:272px;transform:translateX(-100%);transition:.28s cubic-bezier(.2,.8,.3,1);box-shadow:var(--sh-md)}
+  .sidebar.open{transform:none}
+  .sb-backdrop{position:fixed;inset:0;background:rgba(20,18,10,.4);z-index:35;opacity:0;pointer-events:none;transition:.25s}
+  .sb-backdrop.show{opacity:1;pointer-events:auto}
+  .only-m{display:inline-flex}
+  #view{padding:22px 18px 80px}
+  .topbar{padding:0 16px}
+  .searchbox span{display:none}
+  .searchbox{width:40px;padding:9px}
+  .searchbox .kbd{display:none}
+  .login{grid-template-columns:1fr}
+  .lg-left{display:none}
+  .page-head h2{font-size:22px}
+  .stat{min-width:calc(50% - 1px)}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toasts"></div>
+<div id="layer"></div>
+
+<script>
+/* =====================================================
+   TARMOC WORKSPACE — Frontend API (terhubung ke backend)
+   Sesi via cookie httpOnly · otorisasi diputuskan server
+===================================================== */
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now=()=>Date.now();
+
+const store=(()=>{try{const t='__t';localStorage.setItem(t,t);localStorage.removeItem(t);return localStorage}
+catch(e){const m={};return{getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}}})();
+
+/* ---------- API CLIENT ---------- */
+let booted=false,authFail=false;
+const API={
+  async req(m,u,b){
+    let res;
+    try{res=await fetch(u,{method:m,credentials:'same-origin',headers:b?{'Content-Type':'application/json'}:{},body:b?JSON.stringify(b):undefined});}
+    catch(e){throw new Error('Tidak dapat menghubungi server — pastikan backend TARMOC berjalan');}
+    let d={};try{d=await res.json()}catch(e){}
+    if(!res.ok){
+      if(res.status===401&&booted&&!u.includes('/auth/login'))forceLogin();
+      throw new Error(d.error||('HTTP '+res.status));
+    }
+    return d;
+  },
+  get:u=>API.req('GET',u),post:(u,b)=>API.req('POST',u,b),
+  put:(u,b)=>API.req('PUT',u,b),patch:(u,b)=>API.req('PATCH',u,b),del:u=>API.req('DELETE',u)
+};
+function forceLogin(){
+  if(authFail)return;authFail=true;
+  S.me=null;S.apps=[];S.users=[];S.logs=[];S.allRoles=null;
+  renderLogin();toast('Sesi berakhir — silakan masuk kembali','warn');
+  setTimeout(()=>authFail=false,1200);
+}
+
+/* ---------- STATE ---------- */
+const S={me:null,apps:[],users:[],logs:[],cats:[],allRoles:null,roleCache:{},permCache:{},rolePerms:{}};
+const me=()=>S.me?S.me.user:null;
+const isSuper=()=>!!(S.me&&S.me.user.sys_role==='super');
+const grants=()=>S.me?S.me.grants:[];
+const grantFor=aid=>grants().find(g=>g.application_id===aid);
+const canAccess=aid=>isSuper()||!!grantFor(aid);
+const userOf=id=>S.users.find(u=>u.id===id)||(me()&&me().id===id?me():null);
+const appOf=id=>S.apps.find(a=>a.id===id);
+
+/* favorit & notif (preferensi UI per-browser) */
+const favKey=()=>'tarmoc_fav_'+(me()?me().id:'x');
+const favs=()=>{try{return JSON.parse(store.getItem(favKey())||'[]')}catch(e){return[]}};
+const notifKey=()=>'tarmoc_nread_'+(me()?me().id:'x');
+const notifReadTs=()=>+(store.getItem(notifKey())||0);
+
+/* ---------- MAPPER bentuk data server → bentuk view ---------- */
+const mapApp=a=>{a.desc=a.description||'';return a};
+const mapLog=l=>{l.ts=l.created_at;l.desc=l.description;l.ip=l.ip_address;l.agent=l.user_agent;l.userId=l.user_id;l.appId=l.application_id;return l};
+const mapUser=u=>{u.sysrole=u.sys_role;u.lastLogin=u.last_login_at;return u};
+
+async function reloadApps(){S.apps=(await API.get('/api/applications')).applications.map(mapApp)}
+async function reloadLogs(){try{S.logs=(await API.get('/api/logs?limit=300')).logs.map(mapLog)}catch(e){S.logs=[]}}
+async function reloadUsers(){S.users=(await API.get('/api/users')).users.map(mapUser)}
+async function reloadMe(){S.me=await API.get('/api/auth/me');S.me.grants=S.me.grants||[]}
+async function loadCats(){if(!S.cats.length)S.cats=(await API.get('/api/categories')).categories}
+async function loadRolesFor(aid){
+  if(!aid)return;
+  const[r,p]=await Promise.all([API.get('/api/roles?application_id='+aid),API.get('/api/permissions?application_id='+aid)]);
+  S.roleCache[aid]=r.roles;S.permCache[aid]=p.permissions;
+  if(!r.roles.find(x=>x.id===ui.roleSel))ui.roleSel=r.roles[0]?r.roles[0].id:null;
+}
+
+/* ---------- URL HELPERS (tampilan) ---------- */
+const normUrl=u=>{u=(u||'').trim();if(!u)return'';
+  if(/^[a-z][a-z0-9+.-]*:\/\//i.test(u))return u;
+  if(/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?(\/|$)/i.test(u))return'http://'+u;
+  return'https://'+u;};
+const validUrl=u=>{try{return!!new URL(normUrl(u)).hostname}catch(e){return false}};
+const dispUrl=u=>(u||'').replace(/^https?:\/\//i,'').replace(/\/$/,'');
+
+/* ---------- BRAND ---------- */
+const BRAND={img:'',mark:''};const GOLD='#F2C10E';
+(function(){
+  const lists=[['img',['logo-tarmoc.png','logo.png']],['mark',['logo-mark.png','mark.png']]];
+  lists.forEach(([key,list])=>{let i=0;const next=()=>{if(i>=list.length)return;
+    const f=list[i++],im=new Image();im.onload=()=>{BRAND[key]=f;renderCurrent()};im.onerror=next;im.src=f};next();});
+})();
+const HORN_L="M8 12 C34 18 66 34 94 56 C64 76 28 58 8 12 Z";
+const HORN_R="M192 12 C166 18 134 34 106 56 C136 76 172 58 192 12 Z";
+const HEAD="M100 66 C84 70 66 76 48 84 C36 88 26 90 18 92 C30 98 40 104 46 118 C52 142 66 170 88 198 C92 204 97 209 100 212 C103 209 108 204 112 198 C134 170 148 142 154 118 C160 104 170 98 182 92 C174 90 164 88 152 84 C134 76 116 70 100 66 Z";
+const EYE_L="M54 104 C62 106 68 114 69 124 C60 121 54 112 54 104 Z";
+const EYE_R="M146 104 C138 106 132 114 131 124 C140 121 146 112 146 104 Z";
+const NOSTRIL="M92 182 C96 178 104 178 108 182 C104 190 96 190 92 182 Z";
+const bull=h=>`<svg viewBox="0 0 200 224" height="${h}" style="height:${h}px;width:auto;flex:none;display:block" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${HORN_L} ${HORN_R} ${HEAD} ${EYE_L} ${EYE_R} ${NOSTRIL}"/></svg>`;
+const brandMark=h=>BRAND.mark?`<img src="${BRAND.mark}" alt="" style="height:${h}px;width:auto;display:block">`:`<span style="color:${GOLD};display:flex">${bull(h)}</span>`;
+const brandLockup=(h,ns)=>BRAND.img
+  ?`<img src="${BRAND.img}" alt="TARMOC" style="height:${Math.round(h*1.05)}px;width:auto;display:block">`
+  :`<span style="display:inline-flex;align-items:center;gap:13px"><span style="color:${GOLD};display:flex">${bull(h)}</span>
+    <span style="display:flex;flex-direction:column;gap:5px"><b style="font-family:var(--disp);font-weight:800;font-size:${ns}px;letter-spacing:.12em;color:${GOLD};line-height:1">TARMOC</b>
+    <span style="font-size:${Math.max(7.5,Math.round(ns*.34))}px;font-weight:600;letter-spacing:.24em;color:${GOLD};opacity:.9">SMOOTH RUNWAY FOR YOUR NETWORK</span></span></span>`;
+
+/* ---------- WARNa & avatar ---------- */
+const PAL=['#1D5C48','#A8502B','#5C5330','#6E3B54','#256B66','#4A4A42','#8C3A30','#3F5270'];
+const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+function hashStr(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
+const avColor=n=>PAL[hashStr(n||'?')%PAL.length];
+const monogram=(name,color,sm)=>`<span class="monogram ${sm?'mono-sm':''}" style="background:${color}">${esc((name||'?')[0])}</span>`;
+const avatar=(u,lg)=>`<span class="avatar ${lg?'avatar-lg':''}" style="background:${avColor(u.name)}">${initials(u.name)}</span>`;
+
+/* ---------- TEMA & SIDEBAR ---------- */
+let THEME=document.documentElement.getAttribute('data-theme')||'light';
+const applyTheme=()=>document.documentElement.setAttribute('data-theme',THEME);
+let COLLAPSED=false;try{COLLAPSED=store.getItem('tarmoc_sb')==='1'}catch(e){}
+
+/* ---------- LOG META / WAKTU ---------- */
+const LOGMETA={'auth.login':{i:'log-in',l:'Masuk'},'auth.login.failed':{i:'shield-off',l:'Login Gagal'},'auth.logout':{i:'log-out',l:'Keluar'},'app.open':{i:'external-link',l:'Buka Aplikasi'},'app.create':{i:'plus',l:'Tambah Aplikasi'},'app.update':{i:'pencil',l:'Ubah Aplikasi'},'app.status':{i:'power',l:'Status Aplikasi'},'app.delete':{i:'trash-2',l:'Hapus Aplikasi'},'user.create':{i:'user-plus',l:'Tambah Pengguna'},'user.update':{i:'pencil',l:'Ubah Pengguna'},'user.status':{i:'power',l:'Status Pengguna'},'user.delete':{i:'trash-2',l:'Hapus Pengguna'},'user.pass':{i:'key-round',l:'Password'},'access.assign':{i:'key-round',l:'Kelola Akses'},'role.create':{i:'shield',l:'Tambah Role'},'role.delete':{i:'shield',l:'Hapus Role'},'perm.update':{i:'shield-check',l:'Permission'},'perm.create':{i:'shield-check',l:'Permission Baru'},'access.denied':{i:'lock',l:'Akses Ditolak'},'profile.update':{i:'settings',l:'Profil'}};
+function timeAgo(ts){const d=Math.floor((now()-ts)/1000);
+  if(d<60)return'baru saja';if(d<3600)return Math.floor(d/60)+' mnt lalu';
+  if(d<86400)return Math.floor(d/3600)+' jam lalu';return Math.floor(d/86400)+' hari lalu';}
+const fmtDate=ts=>new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short',year:'numeric'}).format(ts);
+const todayStr=()=>new Intl.DateTimeFormat('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
+const greet=()=>{const h=new Date().getHours();return h<11?'Selamat pagi':h<15?'Selamat siang':h<19?'Selamat sore':'Selamat malam'};
+
+function refreshIcons(){try{if(window.lucide)lucide.createIcons({attrs:{'stroke-width':1.8}});
+  else{$$('i[data-lucide]').forEach(el=>{el.textContent='◦';el.style.fontStyle='normal';el.removeAttribute('data-lucide')})}}catch(e){}}
+setInterval(()=>$$('[data-ts]').forEach(el=>el.textContent=timeAgo(+el.dataset.ts)),30000);
+
+const icon=n=>`<i data-lucide="${n}"></i>`;
+const chev=()=>`<i class="chev" data-lucide="chevron-right"></i>`;
+const statusBadge=on=>on?`<span class="badge b-green"><span class="dot"></span>Aktif</span>`:`<span class="badge b-gray"><span class="dot off"></span>Nonaktif</span>`;
+const switchEl=(on,attrs)=>`<button class="switch ${on?'on':''}" ${attrs} aria-label="toggle"></button>`;
+const menuWrap=items=>`<div class="menu-wrap"><button class="icon-btn" data-act="menu"><i data-lucide="more-vertical"></i></button><div class="menu">${items}</div></div>`;
+
+/* ---------- TOAST / MODAL ---------- */
+function toast(msg,type='ok',ms=3400){
+  const ic={ok:'check',err:'x',warn:'help-circle'}[type]||'check';
+  const el=document.createElement('div');el.className='toast '+type;
+  el.innerHTML=`${icon(ic)}<span>${esc(msg)}</span>`;
+  $('#toasts').appendChild(el);refreshIcons();
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),260)},ms);
+}
+const modalLayer=$('#layer');
+function openModal(html,lg=false){closeModal();
+  const ov=document.createElement('div');ov.className='overlay';ov.id='ovl';
+  ov.innerHTML=`<div class="modal ${lg?'modal-lg':''}">${html}</div>`;
+  ov.addEventListener('mousedown',e=>{if(e.target===ov)closeModal()});
+  modalLayer.appendChild(ov);refreshIcons();return ov;}
+function closeModal(){const o=$('#ovl');if(o)o.remove()}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closePalette();closeLaunch()}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'&&S.me){e.preventDefault();openPalette()}});
+function confirmDialog({title,desc,ok='Hapus',danger=true}){
+  return new Promise(res=>{
+    const ov=openModal(`
+      <div class="modal-h"><h3>${esc(title)}</h3><button class="icon-btn" data-act="close-modal">${icon('x')}</button></div>
+      <div class="modal-b"><p class="mut" style="margin-top:8px">${desc}</p></div>
+      <div class="modal-f"><button class="btn btn-ghost" data-act="close-modal">Batal</button>
+      <button class="btn ${danger?'btn-danger':'btn-primary'}" id="cf-ok">${esc(ok)}</button></div>`);
+    ov.querySelector('#cf-ok').onclick=()=>{closeModal();res(true)};
+    ov.querySelectorAll('[data-act="close-modal"]').forEach(b=>b.onclick=()=>{closeModal();res(false)});
+  });}
+
+/* ---------- ROUTER ---------- */
+const ADMIN_ROUTES=['users','apps','roles','logs'];
+let ui={route:'dashboard',myTab:'all',roleApp:'a1',roleSel:null,q:{},logFilter:'all',skTimer:null,sideOpen:false,catF:''};
+function go(r){if(('#/'+r)!==location.hash)location.hash='#/'+r;else renderShell()}
+window.addEventListener('hashchange',()=>{ui.route=(location.hash||'#/dashboard').replace('#/','')||'dashboard';renderShell()});
+function renderCurrent(){if(S.me)renderShell();else if($('#f-login'))renderLogin()}
+
+/* =====================================================
+   LOGIN
+===================================================== */
+function renderLogin(){
+  $('#app').innerHTML=`
+  <div class="login">
+    <div class="lg-left">
+      <div>${brandLockup(50,26)}</div>
+      <div class="lg-mid">
+        <h1>Satu ruang kerja.<br><em>Semua aplikasi.</em><br>Satu kontrol akses.</h1>
+        <p>Central Dashboard dengan backend sungguhan — password ter-hash, sesi aman, dan otorisasi diputuskan di server.</p>
+        <div class="lg-feats">
+          <div class="lg-feat"><span class="fi">${icon('database')}</span>Data tersimpan di server — sama untuk semua pengguna</div>
+          <div class="lg-feat"><span class="fi">${icon('shield-check')}</span>Role &amp; permission per aplikasi, divalidasi di API</div>
+          <div class="lg-feat"><span class="fi">${icon('key-round')}</span>SSO token 5 menit untuk setiap aplikasi tujuan</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--side-dim)">ONE WORKSPACE · EVERY APPLICATION · ONE ACCESS CONTROL</div>
+    </div>
+    <div class="lg-right">
+      <button class="icon-btn" data-act="theme" title="Ganti tema" style="position:absolute;top:22px;right:22px">${icon(THEME==='dark'?'sun':'moon')}</button>
+      <div class="lg-card">
+        <h2>Masuk ke workspace</h2>
+        <p class="sub">Autentikasi diproses oleh server TARMOC API.</p>
+        <form class="lg-form" id="f-login" novalidate>
+          <label class="label" style="margin-top:0">Email</label>
+          <input class="input" id="lg-email" type="email" placeholder="nama@tarmoc.io" autocomplete="username">
+          <label class="label">Password</label>
+          <div class="pw-wrap">
+            <input class="input" id="lg-pass" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px">
+            <button type="button" class="icon-btn" id="lg-eye">${icon('eye')}</button>
+          </div>
+          <p class="err" id="lg-err"></p>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:18px" id="lg-btn">${icon('log-in')} Masuk</button>
+          <div style="margin:20px 0 4px;display:flex;align-items:center;gap:12px"><span style="flex:1;height:1px;background:var(--line)"></span><span style="font-size:11px;color:var(--ink3);font-weight:600">AKUN DEMO — KLIK UNTUK MENGISI</span><span style="flex:1;height:1px;background:var(--line)"></span></div>
+        </form>
+        <div class="demo-chips">
+          <button class="demo-chip" data-mail="heru@tarmoc.io"><span class="avatar" style="background:${avColor('Heru Riyadi')}">HR</span><span>Heru Riyadi<small>Super Admin — akses penuh</small></span></button>
+          <button class="demo-chip" data-mail="budi@tarmoc.io"><span class="avatar" style="background:${avColor('Budi Santoso')}">BS</span><span>Budi Santoso<small>Pengguna — akses terbatas</small></span></button>
+          <button class="demo-chip" data-mail="siti@tarmoc.io"><span class="avatar" style="background:${avColor('Siti Rahma')}">SR</span><span>Siti Rahma<small>Pengguna — Staff &amp; Gudang</small></span></button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  refreshIcons();
+  $$('.demo-chip').forEach(c=>c.onclick=()=>{$('#lg-email').value=c.dataset.mail;$('#lg-pass').value='tarmoc123';$('#lg-err').classList.remove('show')});
+  $('#lg-eye').onclick=()=>{const p=$('#lg-pass');p.type=p.type==='password'?'text':'password'};
+  $('#f-login').onsubmit=async e=>{
+    e.preventDefault();
+    const err=$('#lg-err'),btn=$('#lg-btn');
+    err.classList.remove('show');btn.disabled=true;
+    try{
+      await API.post('/api/auth/login',{email:$('#lg-email').value.trim(),password:$('#lg-pass').value});
+      S.me=await API.get('/api/auth/me');S.me.grants=S.me.grants||[];booted=true;
+      await Promise.all([reloadApps(),reloadLogs()]);
+      if(isSuper())await reloadUsers().catch(()=>{});
+      toast(`Selamat datang kembali, ${me().name.split(' ')[0]}`);
+      go('dashboard');
+    }catch(ex){
+      err.textContent=ex.message;err.classList.add('show');
+      $('.lg-form').classList.add('shake');setTimeout(()=>$('.lg-form').classList.remove('shake'),450);
+    }
+    btn.disabled=false;
+  };
+}
+
+/* =====================================================
+   SHELL
+===================================================== */
+function navItems(){
+  const r=ui.route;
+  const it=(route,ic,label)=>`<button class="sb-item ${r===route?'on':''}" data-act="nav" data-route="${route}" data-tip="${label}">${icon(ic)}<span class="lbl">${label}</span></button>`;
+  let h=it('dashboard','layout-dashboard','Dashboard')+it('myapps','layout-grid','Aplikasi Saya');
+  if(isSuper()){
+    h+=`<div class="sb-sec">Administrasi</div>`
+      +it('users','users','Pengguna')+it('apps','layers','Kelola Aplikasi')+it('roles','shield-check','Role &amp; Permission')
+      +`<div class="sb-sec">Sistem</div>`+it('logs','scroll-text','Log Aktivitas')+it('settings','settings','Pengaturan');
+  }else h+=`<div class="sb-sec">Akun</div>`+it('settings','settings','Pengaturan');
+  return h;
+}
+function renderShell(){
+  if(!S.me)return renderLogin();
+  const u=me();
+  const unread=S.logs.filter(l=>l.ts>notifReadTs()).length;
+  const mine=S.logs.filter(l=>l.userId===u.id&&l.action==='app.open'&&l.appId).sort((a,b)=>b.ts-a.ts);
+  const lastApp=mine.length?appOf(mine[0].appId):null;
+  $('#app').innerHTML=`
+  <div class="sb-backdrop ${ui.sideOpen?'show':''}" data-act="close-side"></div>
+  <div class="shell ${COLLAPSED?'sb-min':''}">
+    <aside class="sidebar ${ui.sideOpen?'open':''}">
+      <div class="sb-brand"><span class="mark" style="${BRAND.img?'':'color:var(--brand)'}">${BRAND.img?`<img src="${BRAND.img}" alt="TARMOC" style="height:34px;width:auto;display:block">`:`${brandMark(34)}<div class="txt"><b>TARMOC</b><span>SMOOTH RUNWAY FOR YOUR NETWORK</span></div>`}</span></div>
+      <button class="sb-fold" data-act="sb-toggle" data-tip="${COLLAPSED?'Perluas menu':'Ciutkan menu'}">${icon(COLLAPSED?'chevrons-right':'chevrons-left')}<span class="flbl">Ciutkan</span></button>
+      <nav class="sb-nav">${navItems()}</nav>
+      <div class="sb-foot">
+        <button class="sb-user" data-act="nav" data-route="settings" data-tip="Pengaturan Akun">
+          ${avatar(u)}<span class="who"><b>${esc(u.name)}</b><span>${isSuper()?'Super Admin':'Pengguna'}</span></span>
+          <span class="sb-out" style="color:var(--side-dim)" data-act="logout">${icon('log-out')}</span>
+        </button>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn only-m" data-act="toggle-side">${icon('menu')}</button>
+        <button class="searchbox" data-act="open-palette">${icon('search')}<span>Cari aplikasi, pengguna, menu…</span><span class="kbd">Ctrl K</span></button>
+        <div style="flex:1"></div>
+        <button class="icon-btn" id="theme-btn" data-act="theme" title="Mode terang/gelap">${icon(THEME==='dark'?'sun':'moon')}</button>
+        <div class="menu-wrap">
+          <button class="icon-btn" data-act="menu" style="position:relative">${icon('bell')}${unread?`<span style="position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span>`:''}</button>
+          <div class="menu notif-panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px 6px"><b style="font-size:13px">Notifikasi</b><button style="font-size:11.5px;font-weight:600;color:var(--brand-text)" data-act="mark-read">Tandai dibaca</button></div>
+            ${S.logs.slice(0,6).map(l=>{const m=LOGMETA[l.action]||{i:'activity'};return`
+              <div class="feed-item" style="padding:10px"><span class="feed-ic">${icon(m.i)}</span>
+              <div style="flex:1;min-width:0"><p>${esc(l.desc)}</p><time>${timeAgo(l.ts)}</time></div></div>`}).join('')}
+          </div>
+        </div>
+        <button class="icon-btn" data-act="open-help">${icon('help-circle')}</button>
+        <div class="menu-wrap">
+          <button data-act="menu" style="display:flex;align-items:center;gap:9px;padding:5px 10px 5px 5px;border-radius:12px;border:1px solid var(--line2);background:var(--surface)">
+            ${avatar(u)}<span style="text-align:left"><b style="font-size:13px;display:block;line-height:1.2">${esc(u.name)}</b><span style="font-size:11px;color:var(--ink2)">${isSuper()?'Super Admin':'Pengguna'}</span></span>${icon('chevron-down')}
+          </button>
+          <div class="menu">
+            <button data-act="nav" data-route="settings">${icon('settings')}Profil &amp; Pengaturan</button>
+            <button data-act="nav" data-route="myapps">${icon('layout-grid')}Aplikasi Saya</button>
+            ${lastApp?`<button data-act="open-app" data-id="${lastApp.id}">${icon('external-link')}Buka ${esc(lastApp.name)}</button>`:''}
+            <hr><button class="danger" data-act="logout">${icon('log-out')}Keluar</button>
+          </div>
+        </div>
+      </header>
+      <div id="view"></div>
+    </div>
+  </div>`;
+  refreshIcons();
+  renderView(true);
+}
+
+const SKEL=`<div style="padding:6px 2px"><div class="sk" style="height:38px;width:340px"></div>
+  <div class="sk" style="height:16px;width:220px;margin-top:12px"></div>
+  <div class="sk" style="height:88px;margin-top:28px;border-radius:18px"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:18px;margin-top:24px">
+  ${'<div class="sk" style="height:220px;border-radius:18px"></div>'.repeat(4)}</div></div>`;
+const errCard=e=>`<div class="card card-b" style="margin-top:20px"><b>Gagal memuat data.</b>
+  <p class="mut" style="margin-top:6px;font-family:var(--mono);font-size:12px">${esc(e.message)}</p>
+  <button class="btn btn-ghost" style="margin-top:14px" data-act="retry">${icon('rotate-ccw')}Coba lagi</button></div>`;
+
+async function renderView(sk=true){
+  const v=$('#view');if(!v)return;
+  clearTimeout(ui.skTimer);
+  const draw=async()=>{
+    try{
+      const r=ui.route;
+      if(ADMIN_ROUTES.includes(r)&&!isSuper()){v.innerHTML=view403();refreshIcons();return}
+      if(r==='users')await reloadUsers();
+      if(r==='logs')await reloadLogs();
+      if(r==='roles')await loadRolesFor(ui.roleApp);
+      if(r==='apps')await loadCats();
+      const fn={dashboard:viewDashboard,myapps:viewMyApps,users:viewUsers,apps:viewApps,roles:viewRoles,logs:viewLogs,settings:viewSettings}[r]||viewDashboard;
+      v.innerHTML=`<div class="fadeup">${fn()}</div>`;refreshIcons();
+      if(r==='myapps')bindAppGrid(),paintMyApps();
+      if(r==='roles')await paintRoleMatrix();
+    }catch(err){v.innerHTML=errCard(err)}
+  };
+  if(sk){v.innerHTML=SKEL;ui.skTimer=setTimeout(draw,200)}else await draw();
+}
+function view403(){return`
+  <div class="n403 fadeup"><b>403</b><h2>Akses ditolak</h2>
+  <p>Server menolak permintaan ini — halaman hanya untuk administrator. Menu disembunyikan di frontend, tapi keputusan akhir selalu di sisi server.</p>
+  <button class="btn btn-primary" data-act="nav" data-route="dashboard">${icon('arrow-left')}Kembali ke Dashboard</button></div>`;}
+
+/* =====================================================
+   KARTU APLIKASI
+===================================================== */
+function lastOpen(aid){
+  const l=S.logs.filter(l=>l.userId===me().id&&l.appId===aid&&l.action==='app.open').sort((a,b)=>b.ts-a.ts)[0];
+  return l?l.ts:null;
+}
+function appCard(a){
+  const g=grantFor(a.id);
+  const role=g?g.role_name:(isSuper()?'Admin':'—');
+  const fav=favs().includes(a.id);
+  const ago=lastOpen(a.id);
+  return`<article class="app-card">
+    <div class="ac-head">
+      ${monogram(a.name,a.color)}
+      <div class="grow"></div>
+      <button class="icon-btn star ${fav?'on':''}" data-act="fav" data-id="${a.id}" title="Favorit">${icon('star')}</button>
+      ${isSuper()?menuWrap(`
+        <button data-act="edit-app" data-id="${a.id}">${icon('pencil')}Edit Aplikasi</button>
+        <button data-act="copy-url" data-id="${a.id}">${icon('link')}Salin URL</button>
+        <button data-act="app-roles" data-id="${a.id}">${icon('shield-check')}Role &amp; Permission</button>
+        <hr><button class="danger" data-act="del-app" data-id="${a.id}">${icon('trash-2')}Hapus</button>`):''}
+    </div>
+    <h3>${esc(a.name)}</h3><p class="desc">${esc(a.desc)}</p>
+    ${a.url?`<div class="mono urlchip" style="font-size:11px;margin-top:5px;display:flex;align-items:center;gap:6px;color:var(--ink3)">${icon('link')}${esc(dispUrl(a.url))}</div>`:''}
+    <div class="ac-meta"><span class="dot"></span>Aktif <span class="role">${esc(role||'—')}</span><span class="ago">${ago?timeAgo(ago):'belum dibuka'}</span></div>
+    <button class="btn open-btn" data-act="open-app" data-id="${a.id}">${icon('external-link')}Buka Aplikasi</button>
+  </article>`;
+}
+function filteredApps(tab,q){
+  let list=S.apps.filter(a=>a.status==='active'&&canAccess(a.id));
+  if(tab==='fav')list=list.filter(a=>favs().includes(a.id));
+  if(tab==='recent'){
+    const ids=S.logs.filter(l=>l.userId===me().id&&l.action==='app.open').sort((a,b)=>b.ts-a.ts).map(l=>l.appId);
+    list=[...new Set(ids)].map(appOf).filter(Boolean).slice(0,8);
+  }
+  if(q)list=list.filter(a=>(a.name+a.desc+a.code+(a.url||'')).toLowerCase().includes(q.toLowerCase()));
+  return list;
+}
+function bindAppGrid(){const inp=$('#appq');if(inp)inp.oninput=()=>{ui.q.apps=inp.value;paintMyApps()}}
+
+/* =====================================================
+   VIEW: DASHBOARD
+===================================================== */
+function feedHTML(logs){
+  if(!logs.length)return`<div class="empty"><span class="ei">${icon('activity')}</span><b>Belum ada aktivitas</b><p>Aktivitas workspace akan muncul di sini.</p></div>`;
+  return logs.map(l=>{const m=LOGMETA[l.action]||{i:'activity'};const usr=userOf(l.userId);return`
+    <div class="feed-item"><span class="feed-ic">${icon(m.i)}</span>
+    <div style="flex:1;min-width:0"><p><b>${usr?esc(usr.name.split(' ')[0]):'Sistem'}</b> — ${esc(l.desc)}</p></div>
+    <time data-ts="${l.ts}">${timeAgo(l.ts)}</time></div>`}).join('');
+}
+function viewDashboard(){
+  const u=me(),superu=isSuper();
+  const myApps=S.apps.filter(a=>a.status==='active'&&canAccess(a.id));
+  const h24=S.logs.filter(l=>l.ts>now()-864e5).length;
+  const stats=superu
+    ?`<div class="stats fadeup">
+      <div class="stat"><b>${S.apps.filter(a=>a.status==='active').length}</b><span>Aplikasi aktif</span></div>
+      <div class="stat"><b>${S.users.filter(x=>x.status==='active').length}</b><span>Pengguna aktif</span></div>
+      <div class="stat"><b>${h24}</b><span>Aktivitas 24 jam</span></div>
+      <div class="stat"><b>${S.users.reduce((n,x)=>n+((x.grants||[]).length),0)}</b><span>Penugasan akses</span></div></div>`
+    :`<div class="stats fadeup">
+      <div class="stat"><b>${myApps.length}</b><span>Aplikasi dapat diakses</span></div>
+      <div class="stat"><b>${favs().filter(id=>appOf(id)).length}</b><span>Favorit</span></div>
+      <div class="stat"><b>${S.logs.filter(l=>l.userId===u.id&&l.ts>now()-864e5).length}</b><span>Aktivitas 24 jam</span></div>
+      <div class="stat"><b style="font-size:20px;padding-top:6px">${fmtDate(u.last_login_at)}</b><span>Terakhir masuk</span></div></div>`;
+  const feedLogs=S.logs.slice(0,7);
+  const qa=superu?[
+    ['plus','Tambah Aplikasi','add-app'],['user-plus','Tambah Pengguna','add-user'],['key-round','Kelola Akses Pengguna','qa-access'],['scroll-text','Lihat Log Aktivitas','nav:logs']
+  ]:[
+    ['external-link',myApps[0]?`Buka ${myApps[0].name}`:'Buka Aplikasi',myApps[0]?'open:'+myApps[0].id:''],
+    ['star','Lihat Favorit','navf'],['settings','Pengaturan Akun','nav:settings']
+  ];
+  return`
+  <div class="crumb">TARMOC <em>/</em> DASHBOARD</div>
+  <div class="page-head" style="align-items:flex-start">
+    <div><h2 style="font-size:34px">${greet()}, ${esc(u.name.split(' ')[0])}</h2>
+    <p>${todayStr()} — ${superu?'ringkasan seluruh workspace.':'Anda memiliki akses ke '+myApps.length+' aplikasi.'}</p></div>
+    ${superu?`<button class="btn btn-primary" data-act="add-app">${icon('plus')}Tambah Aplikasi</button>`:''}
+  </div>
+  ${stats}
+  <div class="dash-2col">
+    <section>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h3 style="font-size:17px">Aplikasi Anda</h3>
+        <button class="btn btn-ghost btn-sm" data-act="nav" data-route="myapps">Lihat semua ${icon('arrow-right')}</button>
+      </div>
+      <div class="grid-apps">${myApps.length?myApps.map(appCard).join(''):`<div class="empty card" style="grid-column:1/-1"><span class="ei">${icon('layout-grid')}</span><b>Belum ada aplikasi</b><p>Administrator belum memberikan akses aplikasi kepada Anda.</p></div>`}</div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:22px">
+      <div class="card"><div class="card-h"><h3>Aksi Cepat</h3></div>${qa.map(q=>`
+        <button class="qa-item" data-act="qa" data-qa="${q[2]}">${icon(q[0])}${q[1]}${chev()}</button>`).join('')}</div>
+      <div class="card"><div class="card-h"><h3>Aktivitas Terbaru</h3><button class="btn btn-ghost btn-sm" data-act="nav" data-route="logs">${icon('scroll-text')}Semua</button></div>
+        <div>${feedHTML(feedLogs)}</div></div>
+    </section>
+  </div>`;
+}
+
+/* =====================================================
+   VIEW: APLIKASI SAYA
+===================================================== */
+function viewMyApps(){
+  const t=ui.myTab;
+  return`
+  <div class="crumb">TARMOC <em>/</em> APLIKASI SAYA</div>
+  <div class="page-head">
+    <div><h2>Aplikasi Saya</h2><p>Hanya aplikasi yang diberikan administrator — difilter di sisi server.</p></div>
+    <div class="tabs">${[['all','Semua'],['fav','Favorit'],['recent','Terbaru']].map(x=>`<button class="${t===x[0]?'on':''}" data-act="mytab" data-t="${x[0]}">${x[1]}</button>`).join('')}</div>
+  </div>
+  <input class="input" id="appq" placeholder="Cari aplikasi atau URL…" style="max-width:340px;margin-bottom:22px" value="${esc(ui.q.apps||'')}">
+  <div class="grid-apps" id="app-grid"></div>`;
+}
+function paintMyApps(){
+  const grid=$('#app-grid');if(!grid)return;
+  const q=(ui.q.apps||'').trim();
+  const list=filteredApps(ui.myTab,q);
+  let empty;
+  if(q)empty=`<div class="empty" style="grid-column:1/-1"><span class="ei">${icon('search-x')}</span><b>Tidak ditemukan</b><p>Tidak ada aplikasi yang cocok dengan "${esc(q)}".</p></div>`;
+  else if(ui.myTab==='fav')empty=`<div class="empty" style="grid-column:1/-1"><span class="ei">${icon('star')}</span><b>Belum ada favorit</b><p>Tandai aplikasi dengan ikon bintang.</p></div>`;
+  else empty=`<div class="empty" style="grid-column:1/-1"><span class="ei">${icon('layout-grid')}</span><b>Tidak ada aplikasi</b><p>Administrator belum memberikan akses.</p></div>`;
+  grid.innerHTML=list.length?list.map(appCard).join(''):empty;
+  refreshIcons();
+}
+
+/* =====================================================
+   VIEW: KELOLA APLIKASI
+===================================================== */
+function viewApps(){
+  return`
+  <div class="crumb">ADMINISTRASI <em>/</em> APLIKASI</div>
+  <div class="page-head">
+    <div><h2>Kelola Aplikasi</h2><p>Tiap aplikasi memakai URL sendiri — role &amp; permission dibuat otomatis oleh server.</p></div>
+    <button class="btn btn-primary" data-act="add-app">${icon('plus')}Tambah Aplikasi</button>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <input class="input" id="appadmin-q" placeholder="Cari nama, kode, atau URL…" style="max-width:280px" value="${esc(ui.q.adminapps||'')}">
+    <select class="select" style="max-width:200px" data-change="cat-filter">
+      <option value="">Semua kategori</option>
+      ${S.cats.map(c=>`<option value="${c.id}" ${ui.catF===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}
+    </select>
+  </div>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Aplikasi</th><th>Kategori</th><th>URL</th><th>Status</th><th>Pengguna</th><th>Urutan</th><th></th></tr></thead>
+    <tbody id="apps-tbody"></tbody></table></div></div>`;
+}
+function paintAppsAdmin(){
+  const tb=$('#apps-tbody');if(!tb)return;
+  const q=(ui.q.adminapps||'').toLowerCase();
+  let list=[...S.apps].sort((a,b)=>(a.display_order||99)-(b.display_order||99));
+  if(q)list=list.filter(a=>(a.name+a.code+(a.url||'')).toLowerCase().includes(q));
+  if(ui.catF)list=list.filter(a=>a.category_id===ui.catF);
+  tb.innerHTML=list.length?list.map(a=>`<tr>
+      <td><div class="cell-user">${monogram(a.name,a.color)}<div><b>${esc(a.name)}</b><span class="mono">${esc(a.code)}</span></div></div></td>
+      <td>${esc(a.category_name||'—')}</td>
+      <td><span class="mono">${a.url?esc(dispUrl(a.url)):'—'}</span></td>
+      <td>${statusBadge(a.status==='active')}</td>
+      <td><b>${a.user_count??'—'}</b> <span class="mut3">pengguna</span></td>
+      <td class="mono">${a.display_order??99}</td>
+      <td><div class="rowact">
+        ${switchEl(a.status==='active',`data-act="toggle-app" data-id="${a.id}"`)}
+        ${menuWrap(`
+          <button data-act="edit-app" data-id="${a.id}">${icon('pencil')}Edit</button>
+          <button data-act="copy-url" data-id="${a.id}">${icon('link')}Salin URL</button>
+          <button data-act="app-roles" data-id="${a.id}">${icon('shield-check')}Role &amp; Permission</button>
+          <button data-act="open-app" data-id="${a.id}">${icon('external-link')}Buka (uji akses)</button>
+          <hr><button class="danger" data-act="del-app" data-id="${a.id}">${icon('trash-2')}Hapus Aplikasi</button>`)}
+      </div></td></tr>`).join('')
+    :`<tr><td colspan="7"><div class="empty"><span class="ei">${icon('search-x')}</span><b>Tidak ada hasil</b></div></td></tr>`;
+  refreshIcons();
+}
+async function appForm(a){
+  const isNew=!a;
+  await loadCats();
+  a=a||{name:'',code:'',desc:'',url:'',category_id:(S.cats[0]||{}).id||'',display_order:S.apps.length+1,status:'active'};
+  openModal(`
+  <div class="modal-h"><h3>${isNew?'Tambah Aplikasi':'Edit Aplikasi'}</h3><button class="icon-btn" data-act="close-modal">${icon('x')}</button></div>
+  <form id="f-app">
+    <div class="modal-b">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+        <div><label class="label" style="margin-top:8px">Nama Aplikasi *</label><input class="input" name="name" value="${esc(a.name)}" placeholder="mis. Purchasing"></div>
+        <div><label class="label" style="margin-top:8px">Kode Unik *</label><input class="input" name="code" value="${esc(a.code)}" placeholder="PURCHASING" style="font-family:var(--mono);text-transform:uppercase"></div>
+      </div>
+      <label class="label">Deskripsi</label><input class="input" name="description" value="${esc(a.desc)}" placeholder="Fungsi singkat aplikasi">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+        <div><label class="label">URL Aplikasi</label>
+          <input class="input" name="url" id="f-app-url" value="${esc(a.url?dispUrl(a.url):'')}" placeholder="appanda.com/kas" style="font-family:var(--mono);font-size:13px">
+          <p class="mut3" id="url-prev" style="font-size:11.5px;margin-top:6px;min-height:16px"></p></div>
+        <div><label class="label">Kategori</label><select class="select" name="category_id">${S.cats.map(c=>`<option value="${c.id}" ${a.category_id===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div>
+      </div>
+      <p class="mut3" style="font-size:12px;margin-top:2px">Format bebas: <code class="mono">appanda.com</code>, <code class="mono">https://app.com/kas</code>, atau <code class="mono">localhost:3000</code>.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">
+        <div><label class="label">Urutan Tampil</label><input class="input" name="display_order" type="number" min="1" value="${a.display_order||99}"></div>
+        <div><label class="label">Status</label><select class="select" name="status"><option value="active" ${a.status==='active'?'selected':''}>Aktif</option><option value="disabled" ${a.status!=='active'?'selected':''}>Nonaktif</option></select></div>
+      </div>
+      ${isNew?`<label class="label">Modul utama (opsional)</label><input class="input" name="entity" placeholder="mis. pembelian — generate permission otomatis">
+      <p class="mut3" style="font-size:12px;margin-top:8px">Server akan membuat role <b>Admin / Manager / Viewer</b> + permission default.</p>`:''}
+      <p class="err" id="f-app-err"></p>
+    </div>
+    <div class="modal-f"><button type="button" class="btn btn-ghost" data-act="close-modal">Batal</button>
+    <button class="btn btn-primary">${icon('check')}${isNew?'Simpan Aplikasi':'Perbarui'}</button></div>
+  </form>`);
+  const up=$('#f-app-url'),prev=$('#url-prev');
+  const upd=()=>{prev.innerHTML=up.value.trim()
+    ?`Akan dibuka di: <b style="color:var(--brand-text);font-family:var(--mono);font-size:11px">${esc(normUrl(up.value))}</b>`
+    :'Kosongkan bila aplikasi tidak punya alamat web.'};
+  up.oninput=upd;upd();
+  $('#f-app').onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(e.target),err=$('#f-app-err');
+    const name=fd.get('name').trim(),code=fd.get('code').trim().toUpperCase();
+    const raw=fd.get('url').trim();
+    if(!name||!code){err.textContent='Nama dan kode aplikasi wajib diisi.';err.classList.add('show');return}
+    if(raw&&!validUrl(raw)){err.textContent='URL tidak valid — contoh: appanda.com, https://app.com/kas, localhost:3000';err.classList.add('show');return}
+    const body={name,code,description:fd.get('description').trim(),url:normUrl(raw),category_id:fd.get('category_id'),display_order:+fd.get('display_order')||99,status:fd.get('status')};
+    try{
+      if(isNew){body.entity=fd.get('entity');
+        await API.post('/api/applications',body);
+        toast(`Aplikasi "${name}" ditambahkan — role &amp; permission dibuat otomatis`);
+      }else{await API.put('/api/applications/'+a.id,body);toast('Perubahan aplikasi tersimpan')}
+      closeModal();
+      await Promise.all([reloadApps(),reloadLogs()]);if(isSuper())await reloadMe().catch(()=>{});
+      renderShell();
+    }catch(ex){err.textContent=ex.message;err.classList.add('show')}
+  };
+}
+
+/* =====================================================
+   VIEW: PENGGUNA
+===================================================== */
+function viewUsers(){
+  return`
+  <div class="crumb">ADMINISTRASI <em>/</em> PENGGUNA</div>
+  <div class="page-head">
+    <div><h2>Pengguna</h2><p>Akun, status, dan penugasan akses aplikasi beserta role-nya.</p></div>
+    <button class="btn btn-primary" data-act="add-user">${icon('user-plus')}Tambah Pengguna</button>
+  </div>
+  <input class="input" id="users-q" placeholder="Cari nama atau email…" style="max-width:300px;margin-bottom:16px" value="${esc(ui.q.users||'')}">
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Pengguna</th><th>Status</th><th>Akses Aplikasi</th><th>Terakhir Masuk</th><th></th></tr></thead>
+    <tbody id="users-tbody"></tbody></table></div></div>`;
+}
+function paintUsers(){
+  const tb=$('#users-tbody');if(!tb)return;
+  const q=(ui.q.users||'').toLowerCase();
+  let list=[...S.users].sort((a,b)=>(a.sysrole==='super'?-1:1)-(b.sysrole==='super'?-1:1));
+  if(q)list=list.filter(u=>(u.name+u.email).toLowerCase().includes(q));
+  tb.innerHTML=list.map(u=>{
+    const gs=u.grants||[];
+    return`<tr>
+      <td><div class="cell-user">${avatar(u)}<div><b>${esc(u.name)} ${u.sysrole==='super'?'<span class="badge b-amber" style="margin-left:6px">Super Admin</span>':''}</b><span>${esc(u.email)}</span></div></div></td>
+      <td>${statusBadge(u.status==='active')}</td>
+      <td><div style="display:flex;align-items:center;gap:4px">${gs.slice(0,4).map(g=>monogram(g.app_name,g.color||'#4A4A42',true)).join('')}
+        ${gs.length>4?`<span class="mono" style="margin-left:4px">+${gs.length-4}</span>`:''}
+        ${!gs.length?'<span class="mut3" style="font-size:12px">Tanpa akses</span>':''}</div></td>
+      <td><span data-ts="${u.last_login_at||0}" style="font-size:12.5px;color:var(--ink2)">${u.last_login_at?timeAgo(u.last_login_at):'belum pernah'}</span></td>
+      <td><div class="rowact">
+        ${u.sysrole!=='super'?switchEl(u.status==='active',`data-act="toggle-user" data-id="${u.id}"`):''}
+        ${menuWrap(`
+          <button data-act="edit-user" data-id="${u.id}">${icon('pencil')}Edit Profil</button>
+          <button data-act="access" data-id="${u.id}">${icon('key-round')}Kelola Akses</button>
+          <button data-act="reset-pass" data-id="${u.id}">${icon('rotate-ccw')}Reset Password</button>
+          <hr><button class="danger" data-act="del-user" data-id="${u.id}">${icon('trash-2')}Hapus Pengguna</button>`)}
+      </div></td></tr>`}).join('');
+  refreshIcons();
+}
+function userForm(u){
+  const isNew=!u;u=u||{name:'',email:'',status:'active'};
+  openModal(`
+  <div class="modal-h"><h3>${isNew?'Tambah Pengguna':'Edit Pengguna'}</h3><button class="icon-btn" data-act="close-modal">${icon('x')}</button></div>
+  <form id="f-user">
+    <div class="modal-b">
+      <label class="label" style="margin-top:8px">Nama Lengkap *</label><input class="input" name="name" value="${esc(u.name)}" placeholder="mis. Rina Amelia">
+      <label class="label">Email *</label><input class="input" name="email" type="email" value="${esc(u.email)}" placeholder="nama@tarmoc.io">
+      <label class="label">Status</label><select class="select" name="status"><option value="active" ${u.status==='active'?'selected':''}>Aktif</option><option value="disabled" ${u.status!=='active'?'selected':''}>Nonaktif</option></select>
+      ${isNew?`<label class="label">Password Awal</label><input class="input" name="password" value="tarmoc123"><p class="mut3" style="font-size:12px;margin-top:6px">Server menyimpannya sebagai hash bcrypt.</p>`:''}
+      <p class="err" id="f-user-err"></p>
+    </div>
+    <div class="modal-f"><button type="button" class="btn btn-ghost" data-act="close-modal">Batal</button>
+    <button class="btn btn-primary">${icon('check')}${isNew?'Simpan Pengguna':'Perbarui'}</button></div>
+  </form>`);
+  $('#f-user').onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(e.target),err=$('#f-user-err');
+    const body={name:fd.get('name').trim(),email:fd.get('email').trim().toLowerCase(),status:fd.get('status')};
+    if(!body.name||!body.email){err.textContent='Nama dan email wajib diisi.';err.classList.add('show');return}
+    try{
+      if(isNew){body.password=fd.get('password')||'tarmoc123';await API.post('/api/users',body);toast(`Pengguna "${body.name}" ditambahkan`)}
+      else{await API.put('/api/users/'+u.id,body);toast('Perubahan pengguna tersimpan')}
+      closeModal();await reloadUsers();renderView(false);
+    }catch(ex){err.textContent=ex.message;err.classList.add('show')}
+  };
+}
+async function accessForm(u){
+  if(!S.allRoles)S.allRoles=(await API.get('/api/roles')).roles;
+  openModal(`
+  <div class="modal-h"><h3>Kelola Akses — ${esc(u.name)}</h3><button class="icon-btn" data-act="close-modal">${icon('x')}</button></div>
+  <form id="f-access">
+    <div class="modal-b">
+      <p class="mut" style="font-size:13px;margin-top:4px">Tentukan aplikasi yang boleh diakses dan role-nya. Role spesifik per aplikasi dan divalidasi server.</p>
+      ${S.apps.map(a=>{
+        const g=(u.grants||[]).find(x=>x.application_id===a.id);
+        const rs=S.allRoles.filter(r=>r.application_id===a.id);
+        return`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)">
+          ${monogram(a.name,a.color,true)}
+          <div style="flex:1;min-width:0"><b style="font-size:13.5px">${esc(a.name)}</b><div class="mono" style="font-size:10.5px">${esc(a.code)}${a.url?' · '+esc(dispUrl(a.url)):''}</div></div>
+          <select class="select" style="width:190px" name="acc_${a.id}">
+            <option value="">Tanpa Akses</option>
+            ${rs.map(r=>`<option value="${r.id}" ${g&&g.role_id===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}
+          </select></div>`}).join('')}
+    </div>
+    <div class="modal-f"><button type="button" class="btn btn-ghost" data-act="close-modal">Batal</button>
+    <button class="btn btn-primary">${icon('check')}Simpan Akses</button></div>
+  </form>`,true);
+  $('#f-access').onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(e.target);let ch=0;
+    for(const a of S.apps){
+      const v=fd.get('acc_'+a.id)||'';
+      const cur=(u.grants||[]).find(x=>x.application_id===a.id);
+      try{
+        if(v&&(!cur||cur.role_id!==v)){await API.post(`/api/users/${u.id}/applications`,{application_id:a.id,role_id:v});ch++}
+        else if(!v&&cur){await API.del(`/api/users/${u.id}/applications/${a.id}`);ch++}
+      }catch(ex){toast(ex.message,'err')}
+    }
+    closeModal();
+    if(ch){await Promise.all([reloadUsers(),reloadLogs()]);toast(ch+' penugasan akses diperbarui');renderView(false)}
+    else toast('Tidak ada perubahan','warn');
+  };
+}
+
+/* =====================================================
+   VIEW: ROLE & PERMISSION
+===================================================== */
+const G_LABEL={dashboard:'Dasbor',product:'Produk',sales:'Penjualan',report:'Laporan',settings:'Pengaturan',item:'Item',stock:'Stok',supplier:'Pemasok',invoice:'Faktur',ledger:'Buku Besar',export:'Ekspor',employee:'Karyawan',attendance:'Kehadiran',payroll:'Payroll',ticket:'Tiket',kb:'Basis Pengetahuan',customer:'Pelanggan',asset:'Aset',data:'Data'};
+const S_LABEL={view:'Lihat',create:'Buat',update:'Ubah',delete:'Hapus',manage:'Kelola',adjust:'Penyesuaian',count:'Opname',post:'Posting',run:'Jalankan',approve:'Setujui',close:'Tutup',edit:'Edit',data:'Data'};
+const permLabel=code=>{const[p,s]=code.split('.');return`${G_LABEL[p]||p[0].toUpperCase()+p.slice(1)} · ${S_LABEL[s]||s}`};
+function viewRoles(){
+  if(!appOf(ui.roleApp)&&S.apps.length)ui.roleApp=S.apps[0].id;
+  const app=appOf(ui.roleApp);
+  const roles=S.roleCache[ui.roleApp]||[];
+  const perms=S.permCache[ui.roleApp]||[];
+  return`
+  <div class="crumb">ADMINISTRASI <em>/</em> ROLE &amp; PERMISSION</div>
+  <div class="page-head">
+    <div><h2>Role &amp; Permission</h2><p>USER → APLIKASI → ROLE → PERMISSION. Setiap perubahan tervalidasi dan dicatat di server.</p></div>
+    <select class="select" style="max-width:260px" data-change="role-app">
+      ${S.apps.map(a=>`<option value="${a.id}" ${a.id===ui.roleApp?'selected':''}>${esc(a.name)}</option>`).join('')}
+    </select>
+  </div>
+  <div class="roles-grid">
+    <div class="card">
+      <div class="card-h"><h3 style="font-size:14px">Role — ${esc(app?app.name:'—')}</h3>
+      ${app?`<button class="btn btn-soft btn-sm" data-act="add-role">${icon('plus')}Role</button>`:''}</div>
+      ${roles.map(r=>`<button class="role-item ${r.id===ui.roleSel?'on':''}" data-act="role-select" data-id="${r.id}">
+        <span class="feed-ic" style="background:var(--surface)">${icon('shield')}</span>
+        <span><b>${esc(r.name)}</b><small>${esc(r.description||'')}</small></span>
+        <span class="cnt">${r.perm_count}p · ${r.user_count}u</span></button>`).join('')}
+      ${!roles.length?`<div class="empty"><span class="ei">${icon('shield')}</span><b>Belum ada role</b><p>Buat role pertama untuk aplikasi ini.</p></div>`:''}
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Permission</h3><button class="btn btn-soft btn-sm" data-act="add-perm">${icon('plus')}Permission Baru</button></div>
+      <div class="card-b" id="perm-matrix"><div class="sk" style="height:120px"></div></div>
+    </div>
+  </div>`;
+}
+async function paintRoleMatrix(){
+  const el=$('#perm-matrix');if(!el)return;
+  const role=(S.roleCache[ui.roleApp]||[]).find(r=>r.id===ui.roleSel);
+  const perms=S.permCache[ui.roleApp]||[];
+  if(!role){el.innerHTML=`<div class="empty"><span class="ei">${icon('shield')}</span><b>Pilih role</b><p>Pilih role di panel kiri untuk mengatur permission-nya.</p></div>`;refreshIcons();return}
+  let ids;
+  try{ids=(await API.get('/api/roles/'+role.id+'/permissions')).permission_ids}
+  catch(e){el.innerHTML=`<div class="empty"><span class="ei">${icon('shield-off')}</span><b>Endpoint belum tersedia</b><p>Tambahkan PATCH di server.js — lihat README bagian "Patch server.js".</p></div>`;refreshIcons();return}
+  S.rolePerms[role.id]=ids;
+  const have=new Set(ids);
+  const groups={};
+  perms.forEach(p=>{const g=p.code.split('.')[0];(groups[g]=groups[g]||[]).push(p)});
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div><b style="font-size:16px;font-family:var(--disp)">${esc(role.name)}</b>
+      <span class="mut" style="font-size:12.5px;margin-left:8px">dipakai ${role.user_count} pengguna</span></div>
+      <button class="btn btn-ghost btn-sm" data-act="del-role" data-id="${role.id}">${icon('trash-2')}Hapus Role</button>
+    </div>
+    ${Object.entries(groups).map(([g,list])=>`<div class="perm-group"><h4>${G_LABEL[g]||g}</h4>
+      ${list.map(p=>`<label class="perm-row ${have.has(p.id)?'on':''}">
+        <input type="checkbox" ${have.has(p.id)?'checked':''} data-change="permchk" data-role="${role.id}" data-perm="${p.id}">
+        <b>${permLabel(p.code)}</b><code>${esc(p.code)}</code></label>`).join('')}</div>`).join('')}
+    <p class="mut3" style="font-size:12px;display:flex;align-items:center;gap:7px">${icon('info')}Setiap centang dikirim ke server (PUT /api/roles/:id/permissions) dan tercatat di audit log.</p>`;
+  refreshIcons();
+}
+
+/* =====================================================
+   VIEW: LOG AKTIVITAS
+===================================================== */
+function viewLogs(){
+  return`
+  <div class="crumb">SISTEM <em>/</em> LOG AKTIVITAS</div>
+  <div class="page-head">
+    <div><h2>Log Aktivitas</h2><p>Audit trail dari server — pengguna, aksi, IP, user-agent, waktu.</p></div>
+    <select class="select" style="max-width:230px" data-change="log-filter">
+      <option value="all">Semua aktivitas</option>
+      ${[...new Set(S.logs.map(l=>l.action))].filter(a=>LOGMETA[a]).map(a=>`<option value="${a}" ${ui.logFilter===a?'selected':''}>${LOGMETA[a].l}</option>`).join('')}
+    </select>
+  </div>
+  <div class="card"><div id="log-list"></div></div>`;
+}
+function paintLogs(){
+  const el=$('#log-list');if(!el)return;
+  let list=[...S.logs].sort((a,b)=>b.ts-a.ts);
+  if(ui.logFilter!=='all')list=list.filter(l=>l.action===ui.logFilter);
+  el.innerHTML=list.length?list.map(l=>{
+    const m=LOGMETA[l.action]||{i:'activity',l:'Aksi'};const u=userOf(l.userId);const a=l.appId?appOf(l.appId):null;
+    return`<div class="feed-item">
+      <span class="feed-ic">${icon(m.i)}</span>
+      <div style="flex:1;min-width:0">
+        <p><b>${u?esc(u.name):'Sistem'}</b> — ${esc(l.desc)}${a?` <span class="badge b-gray" style="margin-left:4px">${esc(a.name)}</span>`:''}</p>
+        <span class="mono" style="font-size:10.5px">${m.l} · IP ${esc(l.ip||'—')} · ${esc(l.agent||'—')}</span>
+      </div>
+      <div style="text-align:right"><time data-ts="${l.ts}">${timeAgo(l.ts)}</time>
+      <div class="mono" style="font-size:10px;color:var(--ink3)">${new Date(l.ts).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit'})} ${new Date(l.ts).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</div></div>
+    </div>`}).join('')
+  :`<div class="empty"><span class="ei">${icon('scroll-text')}</span><b>Tidak ada log</b></div>`;
+  refreshIcons();
+}
+
+/* =====================================================
+   VIEW: PENGATURAN
+===================================================== */
+function viewSettings(){
+  const u=me();
+  return`
+  <div class="crumb">AKUN <em>/</em> PENGATURAN</div>
+  <div class="page-head"><div><h2>Pengaturan</h2><p>Profil, keamanan, dan preferensi tampilan.</p></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;max-width:960px">
+    <div class="card"><div class="card-h"><h3>Profil</h3></div><div class="card-b">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">${avatar(u,1)}
+        <div><b style="font-size:15px">${esc(u.name)}</b><div class="mut" style="font-size:12.5px">${esc(u.email)} · ${isSuper()?'Super Admin':'Pengguna'}</div></div></div>
+      <form id="f-profile">
+        <label class="label">Nama</label><input class="input" name="name" value="${esc(u.name)}">
+        <label class="label">Email</label><input class="input" name="email" type="email" value="${esc(u.email)}">
+        <p class="err" id="pf-err"></p>
+        <button class="btn btn-primary" style="margin-top:18px">${icon('check')}Simpan Profil</button>
+      </form>
+    </div></div>
+    <div class="card"><div class="card-h"><h3>Tampilan &amp; Keamanan</h3></div><div class="card-b">
+      <div class="cb-row" style="cursor:default">
+        ${icon(THEME==='dark'?'moon':'sun')}
+        <span style="flex:1"><b style="font-size:13.5px">Tema Tampilan</b><br><span class="mut3" style="font-size:12px">Saat ini: ${THEME==='dark'?'Gelap':'Terang'}</span></span>
+        <button class="btn btn-ghost btn-sm" data-act="theme">Ganti</button>
+      </div>
+      <form id="f-pass" style="margin-top:14px">
+        <label class="label" style="margin-top:0">Password Saat Ini</label><input class="input" type="password" name="cur" placeholder="••••••••">
+        <label class="label">Password Baru</label><input class="input" type="password" name="next" placeholder="minimal 6 karakter">
+        <label class="label">Konfirmasi Password Baru</label><input class="input" type="password" name="conf" placeholder="ulangi password baru">
+        <p class="err" id="pw-err"></p>
+        <button class="btn btn-ghost" style="margin-top:18px">${icon('key-round')}Ganti Password</button>
+      </form>
+      <hr style="border:none;border-top:1px solid var(--line);margin:20px 0">
+      <div><b style="font-size:13px">Sesi</b>
+        <div class="feed-item" style="padding:10px 0 0;border:none"><span class="feed-ic">${icon('shield-check')}</span>
+        <div><p style="font-size:13px">Sesi aman (cookie httpOnly) — berlaku 8 jam</p><time class="mono" style="font-size:10.5px">Otorisasi divalidasi server pada setiap permintaan</time></div></div></div>
+    </div></div>
+  </div>`;
+}
+
+/* =====================================================
+   COMMAND PALETTE
+===================================================== */
+let palItems=[],palIdx=0;
+function closePalette(){const p=$('#pal');if(p)p.remove()}
+function buildPalItems(q){
+  const superu=isSuper();q=(q||'').toLowerCase();
+  const nav=[['dashboard','layout-dashboard','Dashboard'],['myapps','layout-grid','Aplikasi Saya'],['settings','settings','Pengaturan']]
+    .concat(superu?[['users','users','Pengguna'],['apps','layers','Kelola Aplikasi'],['roles','shield-check','Role & Permission'],['logs','scroll-text','Log Aktivitas']]:[]);
+  const items=[];
+  nav.filter(n=>n[2].toLowerCase().includes(q)).forEach(n=>items.push({g:'Navigasi',ic:n[1],label:n[2],sub:'Buka halaman',run:()=>go(n[0])}));
+  S.apps.filter(a=>a.status==='active'&&canAccess(a.id)&&((a.name+a.code+(a.url||'')).toLowerCase().includes(q))).forEach(a=>
+    items.push({g:'Aplikasi',mono:a,label:a.name,sub:a.url?dispUrl(a.url):a.code,run:()=>openLaunch(a)}));
+  if(superu){
+    S.apps.filter(a=>(a.name+a.code).toLowerCase().includes(q)).forEach(a=>items.push({g:'Aplikasi (kelola)',mono:a,label:a.name,sub:'Edit aplikasi',run:()=>appForm(a)}));
+    S.users.filter(x=>(x.name+x.email).toLowerCase().includes(q)).forEach(x=>items.push({g:'Pengguna',av:x,label:x.name,sub:x.email,run:()=>accessForm(x)}));
+    if('tambah aplikasi'.includes(q))items.push({g:'Tindakan',ic:'plus',label:'Tambah Aplikasi',sub:'Admin',run:()=>appForm(null)});
+    if('tambah pengguna'.includes(q))items.push({g:'Tindakan',ic:'user-plus',label:'Tambah Pengguna',sub:'Admin',run:()=>userForm(null)});
+  }
+  if('gelap terang tema dark light'.includes(q))items.push({g:'Tindakan',ic:THEME==='dark'?'sun':'moon',label:'Ganti Tema',sub:THEME==='dark'?'Ke terang':'Ke gelap',run:()=>{closePalette();A_theme()}});
+  if('keluar logout'.includes(q))items.push({g:'Tindakan',ic:'log-out',label:'Keluar',sub:'Akhir sesi',run:logout});
+  return items;
+}
+function paintPal(){
+  const list=$('#pal-list');if(!list)return;
+  if(!palItems.length){list.innerHTML=`<div class="pal-empty">Tidak ada hasil. Coba kata kunci lain.</div>`;return}
+  let g='',h='';
+  palItems.forEach((it,i)=>{
+    if(it.g!==g){g=it.g;h+=`<div class="pal-g">${g}</div>`}
+    h+=`<div class="pal-it ${i===palIdx?'act':''}" data-pi="${i}">
+      ${it.mono?monogram(it.mono.name,it.mono.color,true):it.av?avatar(it.av):`<i data-lucide="${it.ic}"></i>`}
+      <span>${esc(it.label)}</span><small>${esc(it.sub)}</small></div>`;
+  });
+  list.innerHTML=h;refreshIcons();
+  $$('.pal-it',list).forEach(el=>el.onclick=()=>{closePalette();palItems[+el.dataset.pi].run()});
+  const act=$('.pal-it.act',list);if(act)act.scrollIntoView({block:'nearest'});
+}
+function openPalette(){
+  closePalette();
+  const ov=document.createElement('div');ov.className='overlay';ov.id='pal';ov.style.alignItems='flex-start';
+  ov.innerHTML=`<div class="pal-panel">
+    <div class="pal-in">${icon('search')}<input id="pal-q" placeholder="Ketik untuk mencari…" ><span class="kbd">ESC</span></div>
+    <div class="pal-list" id="pal-list"></div></div>`;
+  ov.addEventListener('mousedown',e=>{if(e.target===ov)closePalette()});
+  modalLayer.appendChild(ov);
+  palItems=buildPalItems('');palIdx=0;paintPal();
+  const inp=$('#pal-q');inp.focus();
+  inp.oninput=()=>{palItems=buildPalItems(inp.value);palIdx=0;paintPal()};
+  inp.onkeydown=e=>{
+    if(e.key==='ArrowDown'){e.preventDefault();palIdx=Math.min(palIdx+1,palItems.length-1);paintPal()}
+    if(e.key==='ArrowUp'){e.preventDefault();palIdx=Math.max(palIdx-1,0);paintPal()}
+    if(e.key==='Enter'&&palItems[palIdx]){closePalette();palItems[palIdx].run()}
+  };
+}
+
+/* =====================================================
+   LAUNCH — SSO TOKEN DARI SERVER
+===================================================== */
+let launchTimers=[],curLaunch=null;
+function closeLaunch(){const l=$('#launch');if(l){launchTimers.forEach(clearTimeout);launchTimers=[];l.remove()}}
+async function openLaunch(a){
+  try{
+    const d=await API.post('/api/sso/token',{application_id:a.id});
+    showLaunch(a,d);
+    await reloadLogs();
+  }catch(e){toast(e.message,'err',5000)}
+}
+function showLaunch(a,d){
+  closeLaunch();
+  curLaunch={a,d};
+  const steps=['Memverifikasi sesi di server TARMOC','Memeriksa hak akses aplikasi','Menerbitkan token SSO (5 menit)',
+               d.url?'Mengalihkan ke '+dispUrl(a.url):'Menyiapkan aplikasi internal'];
+  const ov=document.createElement('div');ov.className='launch';ov.id='launch';
+  ov.innerHTML=`<div class="launch-in">
+    <div style="display:flex;justify-content:center;margin-bottom:14px">${brandMark(58)}</div>
+    ${monogram(a.name,a.color)}
+    <h2>${esc(a.name)}</h2><div class="url">${a.url?esc(dispUrl(a.url))+' · SSO Handoff':'aplikasi internal · SSO Handoff'}</div>
+    <div class="l-steps">${steps.map(s=>`<div class="l-step"><span class="sp"></span>${esc(s)}</div>`).join('')}</div>
+    <div class="l-bar"><i class="lbar"></i></div>
+    <div class="l-final lfinal"></div>
+    <div class="l-done ldone">
+      <button class="btn btn-ghost" data-act="launch-close" style="background:transparent;color:#C9C6B4;border-color:rgba(255,255,255,.25)">Kembali ke Workspace</button>
+      ${d.url?`<button class="btn" data-act="launch-open" style="background:${GOLD};color:#1B1403">${icon('external-link')}Lanjutkan ke Aplikasi</button>`:''}
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  const ss=$$('.l-step',ov),bar=$('.lbar',ov),done=$('.ldone',ov),fin=$('.lfinal',ov);
+  steps.forEach((_,i)=>launchTimers.push(setTimeout(()=>{
+    for(let j=0;j<i;j++)ss[j]&&ss[j].classList.add('done');
+    ss[i].classList.add('show');
+    bar.style.width=Math.round(((i+1)/steps.length)*100)+'%';
+  },450+i*560)));
+  launchTimers.push(setTimeout(()=>{
+    ss.forEach(s=>s.classList.add('done'));
+    fin.textContent=d.url
+      ?'→ '+d.url.replace(/sso_token=[^&]+/,'sso_token='+d.token.slice(0,18)+'…')
+      :'Aplikasi internal — URL eksternal belum diatur';
+    done.classList.add('show');
+  },450+steps.length*560));
+}
+
+/* ---------- HELP ---------- */
+function openHelp(){
+  openModal(`
+  <div class="modal-h"><h3>Tentang TARMOC Workspace</h3><button class="icon-btn" data-act="close-modal">${icon('x')}</button></div>
+  <div class="modal-b">
+    <div style="display:flex;justify-content:center;padding:10px 0 16px">${brandLockup(44,22)}</div>
+    <p class="mut">Central dashboard multi-aplikasi dengan backend Node.js + SQLite. Password di-hash bcrypt, sesi via cookie httpOnly, otorisasi divalidasi server.</p>
+    <div class="perm-group" style="margin-top:18px"><h4>Akun Demo (password: tarmoc123)</h4>
+      ${['heru@tarmoc.io|super admin','budi@tarmoc.io|pengguna terbatas','siti@tarmoc.io|staff & gudang'].map(x=>{const[e,d]=x.split('|');
+      return`<div class="perm-row"><b>${e}</b><code>${d}</code></div>`}).join('')}</div>
+    <div class="perm-group"><h4>Pintasan</h4>
+      <div class="perm-row"><b>Pencarian global</b><code>Ctrl / ⌘ + K</code></div>
+      <div class="perm-row"><b>Ganti tema</b><code>Ikon bulan / matahari</code></div></div>
+  </div>`);
+}
+
+/* ---------- TEMA ---------- */
+function A_theme(){
+  THEME=THEME==='dark'?'light':'dark';
+  applyTheme();try{store.setItem('tarmoc_theme',THEME)}catch(e){}
+  const ic=icon(THEME==='dark'?'sun':'moon');
+  const b=$('#theme-btn');if(b)b.innerHTML=ic;
+  const lg=$('#app')&&$('#app').querySelector('.lg-right [data-act="theme"]');if(lg)lg.innerHTML=ic;
+  refreshIcons();
+  toast(THEME==='dark'?'Mode gelap diaktifkan':'Mode terang diaktifkan');
+}
+
+/* =====================================================
+   EVENT DELEGATION
+===================================================== */
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.menu-wrap'))$$('.menu.show').forEach(m=>m.classList.remove('show'));
+  const t=e.target.closest('[data-act]');if(!t)return;
+  const act=t.dataset.act,id=t.dataset.id;
+  const A={
+    'menu':()=>{const m=t.parentElement.querySelector('.menu');const was=m&&m.classList.contains('show');$$('.menu.show').forEach(x=>x.classList.remove('show'));if(m&&!was)m.classList.add('show')},
+    'close-modal':closeModal,
+    'nav':()=>{ui.sideOpen=false;go(t.dataset.route)},
+    'toggle-side':()=>{ui.sideOpen=!ui.sideOpen;$('.sidebar').classList.toggle('open',ui.sideOpen);$('.sb-backdrop').classList.toggle('show',ui.sideOpen)},
+    'close-side':()=>{ui.sideOpen=false;$('.sidebar')?.classList.remove('open');$('.sb-backdrop')?.classList.remove('show')},
+    'open-palette':openPalette,
+    'open-help':openHelp,
+    'theme':A_theme,
+    'retry':()=>renderView(false),
+    'sb-toggle':()=>{COLLAPSED=!COLLAPSED;try{store.setItem('tarmoc_sb',COLLAPSED?'1':'0')}catch(e){}
+      $('.shell')?.classList.toggle('sb-min',COLLAPSED);
+      const f=$('.sb-fold');if(f){f.innerHTML=icon(COLLAPSED?'chevrons-right':'chevrons-left')+'<span class="flbl">Ciutkan</span>';f.dataset.tip=COLLAPSED?'Perluas menu':'Ciutkan menu';refreshIcons()}},
+    'mark-read':()=>{store.setItem(notifKey(),now());renderShell();toast('Notifikasi ditandai dibaca')},
+    'logout':async()=>{try{await API.post('/api/auth/logout')}catch(e){}S.me=null;S.apps=[];S.users=[];S.logs=[];S.allRoles=null;ui.route='dashboard';renderLogin()},
+    'open-app':()=>{const a=appOf(id);if(a)openLaunch(a)},
+    'launch-close':()=>{closeLaunch();renderShell()},
+    'launch-open':()=>{if(curLaunch&&curLaunch.d.url){try{window.open(curLaunch.d.url,'_blank');toast('Token SSO diteruskan ke '+curLaunch.a.name)}catch(e){toast('Popup diblokir browser','warn',6000)}}},
+    'copy-url':()=>{const a=appOf(id);if(!a||!a.url){toast('Aplikasi ini belum memiliki URL','warn');return}
+      const txt=normUrl(a.url);
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(()=>toast('URL disalin')).catch(()=>toast(txt,'warn',6000));
+      else toast(txt,'warn',6000)},
+    'fav':()=>{const f=favs();const i=f.indexOf(id);i>=0?f.splice(i,1):f.push(id);
+      store.setItem(favKey(),JSON.stringify(f));t.classList.toggle('on');
+      if(ui.route==='myapps')paintMyApps();toast(i>=0?'Dihapus dari favorit':'Ditambahkan ke favorit')},
+    'mytab':()=>{ui.myTab=t.dataset.t;renderShell()},
+    'qa':()=>{const q=t.dataset.q;
+      if(q.startsWith('nav:'))go(q.slice(4));
+      else if(q==='add-app')appForm(null);
+      else if(q==='add-user')userForm(null);
+      else if(q==='qa-access')go('users');
+      else if(q==='navf'){ui.myTab='fav';go('myapps')}
+      else if(q.startsWith('open:')){const a=appOf(q.slice(5));if(a)openLaunch(a)}},
+    'add-app':()=>appForm(null),
+    'edit-app':()=>appForm(appOf(id)),
+    'toggle-app':async()=>{const a=appOf(id);if(!a)return;
+      try{await API.patch('/api/applications/'+a.id+'/status',{status:a.status==='active'?'disabled':'active'});
+        await Promise.all([reloadApps(),reloadLogs()]);
+        toast(`Aplikasi "${a.name}" ${a.status==='active'?'dinonaktifkan':'diaktifkan'}`);renderShell();
+      }catch(e){toast(e.message,'err')}},
+    'del-app':async()=>{const a=appOf(id);if(!a)return;
+      if(!await confirmDialog({title:'Hapus '+a.name+'?',desc:`Aplikasi beserta seluruh role, permission, dan akses pengguna pada <b>${esc(a.name)}</b> akan dihapus permanen di server.`}))return;
+      try{await API.del('/api/applications/'+a.id);
+        await Promise.all([reloadApps(),reloadLogs(),reloadMe().catch(()=>{})]);
+        toast(`Aplikasi "${a.name}" dihapus`);renderShell();
+      }catch(e){toast(e.message,'err')}},
+    'app-roles':()=>{ui.roleApp=id;ui.roleSel=null;go('roles')},
+    'add-user':()=>userForm(null),
+    'edit-user':()=>userForm(S.users.find(x=>x.id===id)),
+    'toggle-user':async()=>{const u=S.users.find(x=>x.id===id);if(!u)return;
+      try{await API.patch('/api/users/'+u.id+'/status',{status:u.status==='active'?'disabled':'active'});
+        await reloadUsers();toast(`Pengguna "${u.name}" ${u.status==='active'?'dinonaktifkan':'diaktifkan'}`);renderView(false);
+      }catch(e){toast(e.message,'err')}},
+    'del-user':async()=>{const u=S.users.find(x=>x.id===id);if(!u)return;
+      if(!await confirmDialog({title:'Hapus '+u.name+'?',desc:`Akun <b>${esc(u.name)}</b> beserta seluruh penugasan aksesnya akan dihapus permanen.`}))return;
+      try{await API.del('/api/users/'+u.id);await reloadUsers();toast(`Pengguna "${u.name}" dihapus`);renderView(false)}catch(e){toast(e.message,'err')}},
+    'access':()=>{const u=S.users.find(x=>x.id===id);if(u)accessForm(u)},
+    'reset-pass':async()=>{const u=S.users.find(x=>x.id===id);if(!u)return;
+      if(!await confirmDialog({title:'Reset password?',desc:`Password <b>${esc(u.name)}</b> akan diganti password sementara oleh server.`,ok:'Reset',danger:false}))return;
+      try{const d=await API.post(`/api/users/${u.id}/reset-password`,{});
+        toast(`Password sementara ${u.name}: ${d.temp_password}`,'ok',9000)}catch(e){toast(e.message,'err')}},
+    'role-select':()=>{ui.roleSel=id;renderView(false)},
+    'add-role':()=>{
+      if(!appOf(ui.roleApp)){toast('Tambahkan aplikasi terlebih dahulu','warn');return}
+      openModal(`
+      <div class="modal-h"><h3>Tambah Role — ${esc(appOf(ui.roleApp).name)}</h3><button class="icon-btn" data-act="close-modal">${icon('x')}</button></div>
+      <form id="f-role"><div class="modal-b">
+        <label class="label" style="margin-top:8px">Nama Role *</label><input class="input" name="name" placeholder="mis. Supervisor">
+        <label class="label">Deskripsi</label><input class="input" name="description" placeholder="Tanggung jawab role ini">
+        <p class="err" id="f-role-err"></p></div>
+      <div class="modal-f"><button type="button" class="btn btn-ghost" data-act="close-modal">Batal</button>
+      <button class="btn btn-primary">${icon('check')}Simpan Role</button></div></form>`);
+      $('#f-role').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);
+        const name=fd.get('name').trim();
+        if(!name){$('#f-role-err').textContent='Nama role wajib diisi.';$('#f-role-err').classList.add('show');return}
+        try{const d=await API.post('/api/roles',{application_id:ui.roleApp,name,description:fd.get('description').trim()});
+          ui.roleSel=d.id;closeModal();await loadRolesFor(ui.roleApp);toast(`Role "${name}" dibuat`);renderView(false);
+        }catch(ex){$('#f-role-err').textContent=ex.message;$('#f-role-err').classList.add('show')}}},
+    'del-role':async()=>{const role=(S.roleCache[ui.roleApp]||[]).find(r=>r.id===id);if(!role)return;
+      if(role.user_count>0){toast(`Role masih dipakai ${role.user_count} pengguna — cabut dulu penugasannya`,'err');return}
+      if(!await confirmDialog({title:'Hapus role '+role.name+'?',desc:'Role beserta pemetaan permission-nya dihapus dari aplikasi.'}))return;
+      try{await API.del('/api/roles/'+role.id);ui.roleSel=null;await loadRolesFor(ui.roleApp);toast(`Role "${role.name}" dihapus`);renderView(false)}catch(e){toast(e.message,'err')}},
+    'add-perm':()=>{
+      if(!appOf(ui.roleApp)){toast('Tambahkan aplikasi terlebih dahulu','warn');return}
+      openModal(`
+      <div class="modal-h"><h3>Permission Baru — ${esc(appOf(ui.roleApp).name)}</h3><button class="icon-btn" data-act="close-modal">${icon('x')}</button></div>
+      <form id="f-perm"><div class="modal-b">
+        <label class="label" style="margin-top:8px">Kode Permission *</label><input class="input" name="code" placeholder="mis. order.export" style="font-family:var(--mono)">
+        <label class="label">Nama / Label</label><input class="input" name="name" placeholder="Ekspor pesanan">
+        <p class="err" id="f-perm-err"></p></div>
+      <div class="modal-f"><button type="button" class="btn btn-ghost" data-act="close-modal">Batal</button>
+      <button class="btn btn-primary">${icon('check')}Tambahkan</button></div></form>`);
+      $('#f-perm').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);
+        try{await API.post('/api/permissions',{application_id:ui.roleApp,code:fd.get('code').trim(),name:fd.get('name').trim()});
+          closeModal();await loadRolesFor(ui.roleApp);toast('Permission ditambahkan');renderView(false);
+        }catch(ex){$('#f-perm-err').textContent=ex.message;$('#f-perm-err').classList.add('show')}}},
+  };
+  try{A[act]?.()}catch(err){toast('Terjadi kesalahan: '+err.message,'err')}
+});
+
+/* ---------- change & input ---------- */
+document.addEventListener('change',async e=>{
+  const el=e.target.closest('[data-change]');if(!el)return;
+  const k=el.dataset.change;
+  if(k==='role-app'){ui.roleApp=el.value;ui.roleSel=null;renderView(false)}
+  if(k==='permchk'){
+    const rid=el.dataset.role,pid=el.dataset.perm;
+    const cur=S.rolePerms[rid]||[];
+    const next=el.checked?[...new Set([...cur,pid])]:cur.filter(x=>x!==pid);
+    try{
+      await API.put('/api/roles/'+rid+'/permissions',{permission_ids:next});
+      S.rolePerms[rid]=next;
+      el.closest('.perm-row').classList.toggle('on',el.checked);
+      const role=(S.roleCache[ui.roleApp]||[]).find(r=>r.id===rid);
+      toast(`${permLabel(el.dataset.perm?((S.permCache[ui.roleApp]||[]).find(p=>p.id===pid)||{code:pid}).code:'')} ${el.checked?'diizinkan':'dicabut'} untuk ${role?role.name:'role'}`);
+      await loadRolesFor(ui.roleApp);
+    }catch(ex){el.checked=!el.checked;toast(ex.message,'err')}
+  }
+  if(k==='log-filter'){ui.logFilter=el.value;paintLogs()}
+  if(k==='cat-filter'){ui.catF=el.value;paintAppsAdmin()}
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='users-q'){ui.q.users=e.target.value;paintUsers()}
+  if(e.target.id==='appadmin-q'){ui.q.adminapps=e.target.value;paintAppsAdmin()}
+});
+
+/* ---------- form profil & password ---------- */
+document.addEventListener('submit',async e=>{
+  if(e.target.id==='f-profile'){
+    e.preventDefault();const fd=new FormData(e.target),err=$('#pf-err');
+    try{
+      await API.put('/api/auth/profile',{name:fd.get('name').trim(),email:fd.get('email').trim().toLowerCase()});
+      await reloadMe();toast('Profil tersimpan');renderShell();
+    }catch(ex){err.textContent=ex.message;err.classList.add('show')}
+  }
+  if(e.target.id==='f-pass'){
+    e.preventDefault();const fd=new FormData(e.target),err=$('#pw-err');
+    if(fd.get('next')!==fd.get('conf')){err.textContent='Konfirmasi password tidak cocok.';err.classList.add('show');return}
+    try{
+      await API.post('/api/auth/password',{current:fd.get('cur'),next:fd.get('next')});
+      toast('Password berhasil diganti');e.target.reset();err.classList.remove('show');
+    }catch(ex){err.textContent=ex.message;err.classList.add('show')}
+  }
+});
+
+/* ---------- INIT (boot: cek sesi dari server) ---------- */
+(async function init(){
+  ui.route=(location.hash||'#/dashboard').replace('#/','')||'dashboard';
+  try{
+    S.me=await API.get('/api/auth/me');S.me.grants=S.me.grants||[];
+    booted=true;
+    await Promise.all([reloadApps(),reloadLogs()]);
+    if(isSuper())await reloadUsers().catch(()=>{});
+    renderShell();
+  }catch(e){renderLogin()}
+})();
+</script>
+</body>
+</html>
