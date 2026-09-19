@@ -14,7 +14,7 @@ const fs           = require('fs');
 const crypto       = require('crypto');
 
 /* ---------- KONFIGURASI ---------- */
-const PORT     = process.env.PORT || 3000;
+const PORT     = process.env.PORT || 3010;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const DB_PATH  = process.env.DB_PATH || path.join(__dirname, 'tarmoc.db');
 
@@ -242,11 +242,11 @@ function requirePerm(appParam, code) {
 
 /* ---------- APP ---------- */
 const app = express();
-app.set('trust proxy', 1);
+app.set('trust proxy', false);
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
-const cookieOpts = () => ({ httpOnly: true, sameSite: 'lax', secure: 'auto', path: '/', maxAge: 8 * 3600 * 1000 });
+const cookieOpts = () => ({ httpOnly: true, sameSite: 'lax', secure: false, path: '/', maxAge: 8 * 3600 * 1000 });
 
 /* rate limit global ringan + throttle ketat khusus login (MD-01 §17) */
 app.use('/api/', rateLimit({ windowMs: 60_000, max: 300, standardHeaders: true, legacyHeaders: false }));
@@ -412,10 +412,10 @@ app.delete('/api/applications/:id', auth, superOnly, h((req, res) => {
   const a = db.prepare('SELECT * FROM applications WHERE id=?').get(req.params.id);
   if (!a) return bad(res, 'Aplikasi tidak ditemukan', 404);
   const tx = db.transaction(() => {
+    db.prepare('DELETE FROM user_applications WHERE application_id=?').run(a.id);
     db.prepare(`DELETE FROM role_permissions WHERE role_id IN (SELECT id FROM roles WHERE application_id=?)`).run(a.id);
     db.prepare('DELETE FROM roles WHERE application_id=?').run(a.id);
     db.prepare('DELETE FROM permissions WHERE application_id=?').run(a.id);
-    db.prepare('DELETE FROM user_applications WHERE application_id=?').run(a.id);
     db.prepare('DELETE FROM applications WHERE id=?').run(a.id);
   });
   tx();
@@ -531,7 +531,7 @@ app.delete('/api/users/:id/applications/:applicationId', auth, superOnly, h((req
   if (!ex) return bad(res, 'Penugasan tidak ditemukan', 404);
   const appRow = db.prepare('SELECT * FROM applications WHERE id=?').get(req.params.applicationId);
   db.prepare('DELETE FROM user_applications WHERE id=?').run(ex.id);
-  logAct(req, 'access.assign', `Akses ${req.user.name === u_name(req.params.id) ? '' : ''}${uName(req.params.id)} pada ${appRow ? appRow.name : ''} dicabut`, req.params.applicationId);
+  logAct(req, 'access.assign', `Akses ${uName(req.params.id)} pada ${appRow ? appRow.name : ''} dicabut`, req.params.applicationId);
   res.json({ ok: true });
 }));
 function uName(id) { const u = db.prepare('SELECT name FROM users WHERE id=?').get(id); return u ? u.name : '?'; }
@@ -646,7 +646,7 @@ app.get('/api/categories', auth, h((req, res) => {
 app.post('/api/sso/token', auth, requireAppAccess('body'), h((req, res) => {
   const a = req.appRow;
   if (a.status !== 'active') return bad(res, 'Aplikasi sedang dinonaktifkan', 409);
-  if (!hasPerm(req.user.id, a.id, 'dashboard.view')) return bad(res, '403 Forbidden — tidak ada permission pada aplikasi ini', 403);
+  if (!isSuper(req.user) && !hasPerm(req.user.id, a.id, 'dashboard.view')) return bad(res, '403 Forbidden — tidak ada permission pada aplikasi ini', 403);
   const ua = db.prepare(`SELECT * FROM user_applications WHERE user_id=? AND application_id=? AND status='active'`).get(req.user.id, a.id);
   const token = jwt.sign(
     { app: a.code, user: req.user.email, role: ua ? ua.role_id : null },
