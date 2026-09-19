@@ -667,6 +667,7 @@ async function renderView(sk=true){
       const fn={dashboard:viewDashboard,myapps:viewMyApps,users:viewUsers,apps:viewApps,roles:viewRoles,logs:viewLogs,settings:viewSettings}[r]||viewDashboard;
       v.innerHTML=`<div class="fadeup">${fn()}</div>`;refreshIcons();
       if(r==='myapps')bindAppGrid(),paintMyApps();
+      if(r==='logs')paintLogs();
       if(r==='roles')await paintRoleMatrix();
     }catch(err){v.innerHTML=errCard(err)}
   };
@@ -735,7 +736,7 @@ function viewDashboard(){
   const stats=superu
     ?`<div class="stats fadeup">
       <div class="stat"><b>${S.apps.filter(a=>a.status==='active').length}</b><span>Aplikasi aktif</span></div>
-      <div class="stat"><b>${S.users.filter(x=>x.status==='active').length}</b><span>Pengguna aktif</span></div>
+      <div class="stat"><b>${S.users.filter(x=>x.status==='active').length}</b><span>Pengguna terdaftar</span></div>
       <div class="stat"><b>${h24}</b><span>Aktivitas 24 jam</span></div>
       <div class="stat"><b>${S.users.reduce((n,x)=>n+((x.grants||[]).length),0)}</b><span>Penugasan akses</span></div></div>`
     :`<div class="stats fadeup">
@@ -923,6 +924,7 @@ function paintUsers(){
   const q=(ui.q.users||'').toLowerCase();
   let list=[...S.users].sort((a,b)=>(a.sysrole==='super'?-1:1)-(b.sysrole==='super'?-1:1));
   if(q)list=list.filter(u=>(u.name+u.email).toLowerCase().includes(q));
+  if(!list.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:34px">Belum ada pengguna terdaftar — gunakan tombol "Tambah Pengguna".</td></tr>';refreshIcons();return}
   tb.innerHTML=list.map(u=>{
     const gs=u.grants||[];
     return`<tr>
@@ -1076,10 +1078,13 @@ function viewLogs(){
   <div class="crumb">SISTEM <em>/</em> LOG AKTIVITAS</div>
   <div class="page-head">
     <div><h2>Log Aktivitas</h2><p>Audit trail dari server — pengguna, aksi, IP, user-agent, waktu.</p></div>
-    <select class="select" style="max-width:230px" data-change="log-filter">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-ghost" data-act="clear-logs">${icon('trash-2')}Bersihkan Log</button>
+      <select class="select" style="max-width:230px" data-change="log-filter">
       <option value="all">Semua aktivitas</option>
       ${[...new Set(S.logs.map(l=>l.action))].filter(a=>LOGMETA[a]).map(a=>`<option value="${a}" ${ui.logFilter===a?'selected':''}>${LOGMETA[a].l}</option>`).join('')}
-    </select>
+      </select>
+    </div>
   </div>
   <div class="card"><div id="log-list"></div></div>`;
 }
@@ -1291,6 +1296,8 @@ document.addEventListener('click',e=>{
       $('.shell')?.classList.toggle('sb-min',COLLAPSED);
       const f=$('.sb-fold');if(f){f.innerHTML=icon(COLLAPSED?'chevrons-right':'chevrons-left')+'<span class="flbl">Ciutkan</span>';f.dataset.tip=COLLAPSED?'Perluas menu':'Ciutkan menu';refreshIcons()}},
     'mark-read':()=>{store.setItem(notifKey(),now());renderShell();toast('Notifikasi ditandai dibaca')},
+    'clear-logs':async()=>{if(!await confirmDialog({title:'Bersihkan semua log?',desc:'Seluruh catatan aktivitas akan dihapus permanen dari server. Aksi ini sendiri akan tercatat sebagai satu entri log baru.',ok:'Ya, Bersihkan'}))return;
+      try{await API.del('/api/logs');ui.logFilter='all';await renderView(false);toast('Log aktivitas dibersihkan')}catch(e){toast(e.message,'err')}},
     'logout':async()=>{try{await API.post('/api/auth/logout')}catch(e){}S.me=null;S.apps=[];S.users=[];S.logs=[];S.allRoles=null;ui.route='dashboard';renderLogin()},
     'open-app':()=>{const a=appOf(id);if(a)openLaunch(a)},
     'launch-close':()=>{closeLaunch();renderShell()},

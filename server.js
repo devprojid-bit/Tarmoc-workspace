@@ -427,7 +427,7 @@ app.delete('/api/applications/:id', auth, superOnly, h((req, res) => {
    USERS (MD-01 §20)
 ===================================================== */
 app.get('/api/users', auth, superOnly, h((req, res) => {
-  const users = db.prepare(`SELECT id,name,email,sys_role,status,last_login_at,created_at FROM users ORDER BY (sys_role='super') DESC, name`).all();
+  const users = db.prepare(`SELECT id,name,email,sys_role,status,last_login_at,created_at FROM users WHERE sys_role <> 'super' ORDER BY name`).all();
   const grants = db.prepare(`
     SELECT ua.user_id, ua.application_id, ua.role_id, a.name app_name, a.color, r.name role_name
     FROM user_applications ua
