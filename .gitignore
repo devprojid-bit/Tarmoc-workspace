@@ -1,0 +1,10 @@
+node_modules/
+tarmoc.db
+tarmoc.db-wal
+tarmoc.db-shm
+.jwt-secret
+.env
+cookies.txt
+c.txt
+b.txt
+*.log
