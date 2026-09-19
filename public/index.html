@@ -668,6 +668,8 @@ async function renderView(sk=true){
       const fn={dashboard:viewDashboard,myapps:viewMyApps,users:viewUsers,apps:viewApps,roles:viewRoles,logs:viewLogs,settings:viewSettings}[r]||viewDashboard;
       v.innerHTML=`<div class="fadeup">${fn()}</div>`;refreshIcons();
       if(r==='myapps')bindAppGrid(),paintMyApps();
+      if(r==='users')paintUsers();
+      if(r==='apps')paintAppsAdmin();
       if(r==='logs')paintLogs();
       if(r==='roles')await paintRoleMatrix();
     }catch(err){v.innerHTML=errCard(err)}
