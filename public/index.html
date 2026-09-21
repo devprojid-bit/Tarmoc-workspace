@@ -546,11 +546,9 @@ function renderLogin(){
           </div>
           <p class="err" id="lg-err"></p>
           <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:18px" id="lg-btn">${icon('log-in')} Masuk</button>
-          <div style="margin:20px 0 4px;display:flex;align-items:center;gap:12px"><span style="flex:1;height:1px;background:var(--line)"></span><span style="font-size:11px;color:var(--ink3);font-weight:600">AKUN SUPER ADMIN</span><span style="flex:1;height:1px;background:var(--line)"></span></div>
+          
         </form>
-        <div class="demo-chips">
-          <button class="demo-chip" data-mail="heru@tarmoc.io"><span class="avatar" style="background:${avColor('Heru Riyadi')}">HR</span><span>Heru Riyadi<small>Super Admin — akses penuh</small></span></button>
-        </div>
+        
       </div>
     </div>
   </div>`;
@@ -1258,8 +1256,8 @@ function openHelp(){
   <div class="modal-b">
     <div style="display:flex;justify-content:center;padding:10px 0 16px">${brandLockup(44,22)}</div>
     <p class="mut">Central dashboard multi-aplikasi dengan backend Node.js + SQLite. Password di-hash bcrypt, sesi via cookie httpOnly, otorisasi divalidasi server.</p>
-    <div class="perm-group" style="margin-top:18px"><h4>Akun Demo (password: tarmoc123)</h4>
-      ${['heru@tarmoc.io|super admin'].map(x=>{const[e,d]=x.split('|');
+    <div class="perm-group" style="margin-top:18px;display:none">
+      ${[''].map(x=>{const[e,d]=x.split('|');
       return`<div class="perm-row"><b>${e}</b><code>${d}</code></div>`}).join('')}</div>
     <div class="perm-group"><h4>Pintasan</h4>
       <div class="perm-row"><b>Pencarian global</b><code>Ctrl / ⌘ + K</code></div>
