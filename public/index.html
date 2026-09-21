@@ -1311,7 +1311,7 @@ document.addEventListener('click',e=>{
       store.setItem(favKey(),JSON.stringify(f));t.classList.toggle('on');
       if(ui.route==='myapps')paintMyApps();toast(i>=0?'Dihapus dari favorit':'Ditambahkan ke favorit')},
     'mytab':()=>{ui.myTab=t.dataset.t||'all';renderShell()},
-    'qa':()=>{const q=t.dataset.q||'';
+    'qa':()=>{const q=t.dataset.qa||'';
       if(q.startsWith('nav:'))go(q.slice(4));
       else if(q==='add-app')appForm(null);
       else if(q==='add-user')userForm(null);
@@ -1382,7 +1382,7 @@ document.addEventListener('click',e=>{
           closeModal();await loadRolesFor(ui.roleApp);toast('Permission ditambahkan');renderView(false);
         }catch(ex){$('#f-perm-err').textContent=ex.message;$('#f-perm-err').classList.add('show')}}},
   };
-  try{A[act]?.()}catch(err){toast('Terjadi kesalahan: '+err.message,'err')}
+  try{const r=A[act]?.();if(r&&typeof r.catch==='function')r.catch(e=>{console.error(e);toast('Terjadi kesalahan: '+e.message,'err')})}catch(err){console.error(err);toast('Terjadi kesalahan: '+err.message,'err')}
 });
 
 /* ---------- change & input ---------- */
