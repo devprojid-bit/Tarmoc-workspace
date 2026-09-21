@@ -1286,7 +1286,7 @@ document.addEventListener('click',e=>{
   const A={
     'menu':()=>{const m=t.parentElement.querySelector('.menu');const was=m&&m.classList.contains('show');$$('.menu.show').forEach(x=>x.classList.remove('show'));if(m&&!was)m.classList.add('show')},
     'close-modal':closeModal,
-    'nav':()=>{ui.sideOpen=false;go(t.dataset.route)},
+    'nav':()=>{ui.sideOpen=false;go(t.dataset.route||'dashboard')},
     'toggle-side':()=>{ui.sideOpen=!ui.sideOpen;$('.sidebar').classList.toggle('open',ui.sideOpen);$('.sb-backdrop').classList.toggle('show',ui.sideOpen)},
     'close-side':()=>{ui.sideOpen=false;$('.sidebar')?.classList.remove('open');$('.sb-backdrop')?.classList.remove('show')},
     'open-palette':openPalette,
@@ -1310,8 +1310,8 @@ document.addEventListener('click',e=>{
     'fav':()=>{const f=favs();const i=f.indexOf(id);i>=0?f.splice(i,1):f.push(id);
       store.setItem(favKey(),JSON.stringify(f));t.classList.toggle('on');
       if(ui.route==='myapps')paintMyApps();toast(i>=0?'Dihapus dari favorit':'Ditambahkan ke favorit')},
-    'mytab':()=>{ui.myTab=t.dataset.t;renderShell()},
-    'qa':()=>{const q=t.dataset.q;
+    'mytab':()=>{ui.myTab=t.dataset.t||'all';renderShell()},
+    'qa':()=>{const q=t.dataset.q||'';
       if(q.startsWith('nav:'))go(q.slice(4));
       else if(q==='add-app')appForm(null);
       else if(q==='add-user')userForm(null);
