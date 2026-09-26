@@ -464,7 +464,17 @@ const PAL=['#1D5C48','#A8502B','#5C5330','#6E3B54','#256B66','#4A4A42','#8C3A30'
 const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 function hashStr(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
 const avColor=n=>PAL[hashStr(n||'?')%PAL.length];
+const FALLBACK_ICONS=['app-window','box','hexagon','shapes','component','diamond','sparkles','layout-grid'];
 const APPICON_RULES=[
+[/studio|desain|design|kreatif/i,'palette'],
+[/social|hub|komunitas/i,'share-2'],
+[/\bapp\b/i,'app-window'],
+[/\badmin\b|portal|workspace/i,'layout-dashboard'],
+[/garansi|warrant|\bservice\b|repair|perbaikan/i,'wrench'],
+[/\btms\b|\bwh\b|truck|transport|armada|fleet|logistik|ekspedisi/i,'truck'],
+[/cuti|izin|leave|libur/i,'calendar-days'],
+[/gaji|slip|payroll/i,'banknote'],
+[/laporan|dashboard\s?[0-9]|analitik|analytics/i,'chart-pie'],
 [/scan|barcode|qr|rezi/i,'scan-line'],
 [/pickup|kurir|deliver|kirim|antar/i,'package'],
 [/store|toko|jual|retail|sales|kas|pos/i,'shopping-cart'],
@@ -483,7 +493,7 @@ const APPICON_RULES=[
 [/auth|login|akses|gate|sso/i,'shield-check'],
 [/absensi|hadir|clock/i,'clock']
 ];
-const appIconOf=(...parts)=>{const s=parts.filter(Boolean).join(' ');for(const[r,i]of APPICON_RULES)if(r.test(s))return i;return null};
+const appIconOf=(...parts)=>{const s=parts.filter(Boolean).join(' ');for(const[r,i]of APPICON_RULES)if(r.test(s))return i;return FALLBACK_ICONS[hashStr(s)%FALLBACK_ICONS.length]};
 const monogram=(name,color,sm)=>{const ic=appIconOf(name);const inner=ic?`<i data-lucide="${ic}"></i>`:`<b>${esc((name||'?')[0].toUpperCase())}</b>`;return`<span class="monogram ${sm?'mono-sm':''}" style="background:${color}" title="${esc(name||'')}">${inner}</span>`};
 const avatar=(u,lg)=>`<span class="avatar ${lg?'avatar-lg':''}" style="background:${avColor(u.name)}">${initials(u.name)}</span>`;
 
