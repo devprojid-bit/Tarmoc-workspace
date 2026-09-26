@@ -86,9 +86,9 @@ a{color:inherit}
 .mono{font-family:var(--mono);font-size:12px;color:var(--ink2)}
 .mut{color:var(--ink2)}.mut3{color:var(--ink3)}
 .urlchip svg{width:12px;height:12px;flex:none}
-.monogram{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;font:700 19px/1 var(--disp);flex:none;position:relative;overflow:hidden;letter-spacing:.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 0 0 1px rgba(255,255,255,.1),var(--sh-sm)}
-.monogram::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(155deg,rgba(255,255,255,.22),rgba(255,255,255,0) 46%,rgba(0,0,0,.14))}
-.mono-sm{width:27px;height:27px;border-radius:8px;font-size:11.5px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+
+
+
 .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font:600 12.5px var(--body);flex:none}
 .avatar-lg{width:56px;height:56px;font-size:19px}
 .shell{display:grid;grid-template-columns:256px 1fr;min-height:100vh}
@@ -249,7 +249,7 @@ tbody tr:hover{background:var(--rowh)}
 .launch{position:fixed;inset:0;background:var(--side);z-index:150;display:flex;align-items:center;justify-content:center;color:var(--side-txt);animation:fdin .25s}
 .launch::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.09) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 75%)}
 .launch-in{position:relative;text-align:center;width:min(430px,90vw)}
-.launch-in .monogram{width:72px;height:72px;border-radius:20px;font-size:28px;margin:0 auto 18px}
+.launch-in 
 .launch-in h2{font-size:26px;color:#fff}
 .launch-in .url{font-family:var(--mono);font-size:12.5px;color:var(--side-dim);margin-top:5px}
 .l-steps{text-align:left;margin:28px auto 0;max-width:320px}
@@ -338,6 +338,21 @@ tbody tr:hover{background:var(--rowh)}
   .page-head h2{font-size:22px}
   .stat{min-width:calc(50% - 1px)}
 }
+
+.monogram{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;color:#fff;position:relative;box-shadow:0 14px 28px -14px rgba(0,0,0,.7)}
+.monogram b{position:relative;font:700 19px/1 var(--disp)}
+.monogram svg{position:relative;width:22px;height:22px;stroke-width:2.1}
+.mono-sm{width:27px;height:27px;border-radius:9px}
+.mono-sm b{font-size:12px}
+.mono-sm svg{width:14px;height:14px}
+.monogram::before{content:'';position:absolute;inset:4px;border-radius:inherit;background:inherit;filter:blur(14px) saturate(1.5);opacity:.55}
+.monogram::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 40%,rgba(0,0,0,.2));box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(255,255,255,.14)}
+.mono-sm::before{filter:blur(8px) saturate(1.5);opacity:.45;inset:3px}
+
+.stat-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#1B1403;flex:none;
+background:linear-gradient(145deg,#FFE27A,#F2C10E 55%,#D9A90B);
+box-shadow:0 10px 22px -10px rgba(242,193,14,.6),inset 0 1px 0 rgba(255,255,255,.55)}
+.stat-ic svg{width:21px;height:21px;stroke-width:2.8;color:#1B1403}
 </style>
 </head>
 <body>
@@ -449,7 +464,27 @@ const PAL=['#1D5C48','#A8502B','#5C5330','#6E3B54','#256B66','#4A4A42','#8C3A30'
 const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 function hashStr(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
 const avColor=n=>PAL[hashStr(n||'?')%PAL.length];
-const monogram=(name,color,sm)=>`<span class="monogram ${sm?'mono-sm':''}" style="background:${color}">${esc((name||'?')[0].toUpperCase())}</span>`;
+const APPICON_RULES=[
+[/scan|barcode|qr|rezi/i,'scan-line'],
+[/pickup|kurir|deliver|kirim|antar/i,'package'],
+[/store|toko|jual|retail|sales|kas|pos/i,'shopping-cart'],
+[/stok|invent|gudang|warehouse|item/i,'boxes'],
+[/finan|keuangan|invoice|faktur|akuntan|ledger/i,'wallet'],
+[/hr|karyawan|pegawai|absen|payroll/i,'users'],
+[/help|tiket|support|dukungan/i,'life-buoy'],
+[/monitor|noc|jaringan|network|server/i,'activity'],
+[/aset|asset/i,'archive'],
+[/purchas|beli|prokur|order/i,'shopping-bag'],
+[/projek|proyek|task|tugas/i,'kanban-square'],
+[/lapor|report/i,'file-bar-chart'],
+[/backup|restore/i,'database-backup'],
+[/mail|email|surat/i,'mail'],
+[/web|site|cms|landing/i,'globe'],
+[/auth|login|akses|gate|sso/i,'shield-check'],
+[/absensi|hadir|clock/i,'clock']
+];
+const appIconOf=(...parts)=>{const s=parts.filter(Boolean).join(' ');for(const[r,i]of APPICON_RULES)if(r.test(s))return i;return null};
+const monogram=(name,color,sm)=>{const ic=appIconOf(name);const inner=ic?`<i data-lucide="${ic}"></i>`:`<b>${esc((name||'?')[0].toUpperCase())}</b>`;return`<span class="monogram ${sm?'mono-sm':''}" style="background:${color}" title="${esc(name||'')}">${inner}</span>`};
 const avatar=(u,lg)=>`<span class="avatar ${lg?'avatar-lg':''}" style="background:${avColor(u.name)}">${initials(u.name)}</span>`;
 
 /* ---------- TEMA & SIDEBAR ---------- */
@@ -1233,8 +1268,7 @@ function showLaunch(a,d){
       ${d.url?`<button class="btn" data-act="launch-open" style="background:${GOLD};color:#1B1403">${icon('external-link')}Lanjutkan ke Aplikasi</button>`:''}
     </div>
   </div>`;
-  document.body.appendChild(ov);
-  const ss=$$('.l-step',ov),bar=$('.lbar',ov),done=$('.ldone',ov),fin=$('.lfinal',ov);
+  document.body.appendChild(ov);refreshIcons();const ss=$$('.l-step',ov),bar=$('.lbar',ov),done=$('.ldone',ov),fin=$('.lfinal',ov);
   steps.forEach((_,i)=>launchTimers.push(setTimeout(()=>{
     for(let j=0;j<i;j++)ss[j]&&ss[j].classList.add('done');
     ss[i].classList.add('show');
