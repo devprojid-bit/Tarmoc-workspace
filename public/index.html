@@ -353,6 +353,10 @@ tbody tr:hover{background:var(--rowh)}
 background:linear-gradient(145deg,#FFE27A,#F2C10E 55%,#D9A90B);
 box-shadow:0 10px 22px -10px rgba(242,193,14,.6),inset 0 1px 0 rgba(255,255,255,.55)}
 .stat-ic svg{width:21px;height:21px;stroke-width:2.8;color:#1B1403}
+
+.launch-in .monogram{width:64px;height:64px;border-radius:18px;margin:0 auto 16px}
+.launch-in .monogram svg{width:30px;height:30px}
+.launch-in .monogram b{font-size:26px}
 </style>
 </head>
 <body>
@@ -439,7 +443,7 @@ const validUrl=u=>{try{return!!new URL(normUrl(u)).hostname}catch(e){return fals
 const dispUrl=u=>(u||'').replace(/^https?:\/\//i,'').replace(/\/$/,'');
 
 /* ---------- BRAND ---------- */
-const BRAND={img:'',mark:''};const GOLD='#F2C10E';
+const BRAND={img:'',mark:'',crop:0.78};const GOLD='#F2C10E';
 (function(){
   const lists=[['img',['logo-tarmoc.png','logo.png']],['mark',['logo-mark.png','mark.png']]];
   lists.forEach(([key,list])=>{let i=0;const next=()=>{if(i>=list.length)return;
@@ -452,7 +456,7 @@ const EYE_L="M54 104 C62 106 68 114 69 124 C60 121 54 112 54 104 Z";
 const EYE_R="M146 104 C138 106 132 114 131 124 C140 121 146 112 146 104 Z";
 const NOSTRIL="M92 182 C96 178 104 178 108 182 C104 190 96 190 92 182 Z";
 const bull=h=>`<svg viewBox="0 0 200 224" height="${h}" style="height:${h}px;width:auto;flex:none;display:block" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${HORN_L} ${HORN_R} ${HEAD} ${EYE_L} ${EYE_R} ${NOSTRIL}"/></svg>`;
-const brandMark=h=>BRAND.mark?`<img src="${BRAND.mark}" alt="TARMOC" style="height:${h}px;width:auto;display:block">`:BRAND.img?`<span style="display:inline-block;width:${h}px;height:${h}px;overflow:hidden;flex:none"><img src="${BRAND.img}" alt="TARMOC" style="height:${h}px;width:auto;max-width:none;display:block"></span>`:`<span style="color:${GOLD};display:flex">${bull(h)}</span>`;
+const brandMark=(h,color=GOLD)=>BRAND.mark?`<img src="${BRAND.mark}" alt="TARMOC" style="height:${h}px;width:auto;display:block">`:BRAND.img?`<span style="display:inline-block;width:${Math.round(h*BRAND.crop)}px;height:${h}px;overflow:hidden;flex:none"><img src="${BRAND.img}" alt="TARMOC" style="height:${h}px;width:auto;max-width:none;display:block"></span>`:`<span style="color:${color};display:flex">${bull(h)}</span>`;
 const brandLockup=(h,ns)=>BRAND.img
   ?`<img src="${BRAND.img}" alt="TARMOC" style="height:${Math.round(h*1.05)}px;width:auto;display:block">`
   :`<span style="display:inline-flex;align-items:center;gap:13px"><span style="color:${GOLD};display:flex">${bull(h)}</span>
@@ -1267,7 +1271,7 @@ function showLaunch(a,d){
                d.url?'Mengalihkan ke '+dispUrl(a.url):'Menyiapkan aplikasi internal'];
   const ov=document.createElement('div');ov.className='launch';ov.id='launch';
   ov.innerHTML=`<div class="launch-in">
-    <div style="display:flex;justify-content:center;margin-bottom:14px">${brandMark(58)}</div>
+    <div style="display:flex;justify-content:center;margin-bottom:16px">${BRAND.img?`<img src="${BRAND.img}" alt="TARMOC" style="height:34px;width:auto;display:block">`:brandMark(52)}</div>
     ${monogram(a.name,a.color)}
     <h2>${esc(a.name)}</h2><div class="url">${a.url?esc(dispUrl(a.url))+' · SSO Handoff':'aplikasi internal · SSO Handoff'}</div>
     <div class="l-steps">${steps.map(s=>`<div class="l-step"><span class="sp"></span>${esc(s)}</div>`).join('')}</div>
